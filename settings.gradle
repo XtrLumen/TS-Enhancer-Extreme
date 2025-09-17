@@ -1,0 +1,28 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    plugins {
+        id("com.android.library") version '8.8.0'
+        id("com.android.application") version '8.8.0'
+        id("org.jetbrains.kotlin.android") version "2.1.0"
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google {
+            content {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.google")
+                includeGroupAndSubgroups("com.android")
+            }
+        }
+        mavenCentral()
+    }
+}
+rootProject.name = 'TS-Enhancer-Extreme'
+include 'app'
+include 'dex'
+include 'module'

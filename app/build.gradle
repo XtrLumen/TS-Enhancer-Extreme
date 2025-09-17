@@ -1,0 +1,97 @@
+import com.android.build.gradle.internal.tasks.CompileArtProfileTask
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+def verName = rootProject.ext.verName
+def verCode = rootProject.ext.verCode
+
+android {
+    compileSdk = 35
+    buildToolsVersion = '35.0.1'
+    namespace = 'io.github.xtrlumen.vbmeta'
+    defaultConfig {
+        minSdk = 24
+        targetSdk = 35
+        versionCode = verCode
+        versionName = verName
+    resourceConfigurations = ['en']
+        optimization {
+            keepRules {
+                ignoreFromAllExternalDependencies true
+            }
+        }
+    }
+
+    signingConfigs {
+        debug {
+            if (properties["storeFile"] != null) {
+                storeFile file(properties["storeFile"])
+                storePassword properties["storePassword"]
+                keyAlias properties["keyAlias"]
+                keyPassword properties["keyPassword"]
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            versionNameSuffix '-debug'
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            vcsInfo.include false
+            signingConfig signingConfigs.debug
+            proguardFiles 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+    kotlinOptions {
+        jvmTarget = "21"
+        options.languageVersion = KotlinVersion.KOTLIN_2_1
+        options.progressiveMode = true
+    }
+
+    buildFeatures {
+        viewBinding = false
+        buildConfig = true
+    aidl = false
+    }
+
+    packagingOptions {
+        resources {
+            excludes += '**'
+        }
+    }
+
+    androidResources {
+    generateLocaleConfig false
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+        disable 'AppCompatResource'
+    }
+    dependenciesInfo.includeInApk false
+}
+
+tasks.withType(CompileArtProfileTask.class).configureEach {
+    enabled = false
+}
+
+configurations.configureEach {
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+}
+
+dependencies {
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.80'
+}

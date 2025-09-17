@@ -1,0 +1,8 @@
+id=${moduleId}
+name=${moduleName}
+version=${versionName}
+versionCode=${versionCode}
+author=XtrLumen
+description=[🔄]提升TrickyStore的使用体验,同时极致隐藏由解锁引导加载程序产生的相关检测点.│Improve the user experience of TrickyStore, while providing extreme hiding of detection points introduced by bootloader unlocking.
+updateJson=https://xtrlumen.github.io/TS-Enhancer-Extreme/update.json
+banner=banner.png
