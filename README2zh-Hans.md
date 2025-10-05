@@ -23,7 +23,7 @@
 - [x] 伪装引导加载程序状态为锁定
 - [x] 将安全补丁级别同步至属性
 - [x] 提供谷歌硬件认证根证书签名的keybox<sup>已吊销</sup>
-- [x] 在TrickyStore模块卡片上添加操作按钮,用于更新TrickyStore模块目标文件<sup>即将更改</sup>.
+- [ ] 在TrickyStore模块卡片上添加操作按钮,用于更新TrickyStore模块目标文件<sup>即将更改</sup>.
 
 ### 其他
 - [x] 监控并显示运行状态
