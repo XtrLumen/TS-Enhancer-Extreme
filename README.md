@@ -23,7 +23,7 @@ Enhances the TrickyStore experience, while providing comprehensive hiding of boo
 - [x] Synchronizes the security patch level to the attributes
 - [x] Spoofs bootloader status as locked
 - [x] Provides Google Hardware Attestation Root Certificate signing keybox<sup>Revoked</sup>
-- [x] Adds action button to TrickyStore module card for updating TrickyStore module target files<sup>About to change</sup>.
+- [ ] Adds action button to TrickyStore module card for updating TrickyStore module target files<sup>About to change</sup>.
 
 ### Other
 - [x] Monitors and displays operating status
