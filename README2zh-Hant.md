@@ -23,7 +23,7 @@
 - [x] 將安全性修補程式等級同步至屬性
 - [x] 偽裝引導載入程式狀態為鎖定
 - [x] 提供Google硬體認證根憑證簽章的keybox<sup>已撤銷</sup>
-- [x] 在TrickyStore模組卡片上添加操作按鈕，用於更新TrickyStore模組目標檔案<sup>即將更改</sup>.
+- [ ] 在TrickyStore模組卡片上添加操作按鈕，用於更新TrickyStore模組目標檔案<sup>即將更改</sup>.
 
 ### 其他
 - [x] 監控並顯示運行狀態
