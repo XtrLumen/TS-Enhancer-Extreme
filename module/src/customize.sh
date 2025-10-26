@@ -116,10 +116,10 @@ TA_utl
 "
 OFSDETECTED=0
 OFSCONFLICT="$RMRFCONFLICT $CONFLICT"
-functions_cn WAY="下一次启动时被移除."
-functions_en WAY="upon the next boot."
 functions_cn DES="此模块与TS-Enhancer-Extreme模块证实冲突,已被添加移除标签,将在"
+functions_cn WAY="下一次启动时被移除."
 functions_en DES="This module has been confirmed to conflict with the TS-Enhancer-Extreme module. It has been tagged for removal and will be removed "
+functions_en WAY="upon the next boot."
 APPDETECTED=0
 APPCONFLICT="
 com.lingqian.appbl
@@ -139,9 +139,9 @@ source "$TMPDIR/verify.sh"
 [ "$BOOTMODE" ] || {
   ui_print "***********************************************"
   print_cn "! 不受支持的安装环境 Recovery"
-  print_cn "! 请从 Magisk 或 KernelSU 应用安装"
+  print_cn "! 请从 KernelSU, APatch 或 Magisk 应用安装"
   print_en "! Install from recovery is not supported"
-  print_en "! Please install from KernelSU or Magisk app"
+  print_en "! Please install from KernelSU, APatch or Magisk app"
   abort "***********************************************"
 }
 [ "$RELEASE" -lt $MIN_RELEASE ] && {
@@ -152,6 +152,28 @@ source "$TMPDIR/verify.sh"
   print_en "! Minimal supported android version is $MIN_RELEASE"
   abort "***********************************************"
 }
+if [ "$KSU" ]; then
+  print_cn "- 从 KernelSU 应用中安装"
+  print_cn "- KernelSU 版本: $KSU_VER"
+  print_cn "- KernelSU 版本号: $KSU_KERNEL_VER_CODE (kernel) + $KSU_VER_CODE (ksud)"
+  print_en "- Installing from KernelSU app"
+  print_en "- KernelSU version: $KSU_VER"
+  print_en "- KernelSU version code: $KSU_KERNEL_VER_CODE (kernel) + $KSU_VER_CODE (ksud)"
+elif [ "$APATCH" ]; then
+  print_cn "- 从 APatch 应用安装"
+  print_cn "- APatch 版本: $APATCH_VER"
+  print_cn "- APatch 版本号: $APATCH_VER_CODE"
+  print_en "- Installing from APatch app"
+  print_en "- APatch version: $APATCH_VER"
+  print_en "- APatch version code: $APATCH_VER_CODE"
+elif [ "$MAGISK_VER" ]; then
+  print_cn "- 从 Magisk 应用安装"
+  print_cn "- Magisk 版本: $MAGISK_VER"
+  print_cn "- Magisk 版本号: $MAGISK_VER_CODE"
+  print_en "- Installing from Magisk app"
+  print_en "- Magisk version: $MAGISK_VER"
+  print_en "- Magisk version code: $MAGISK_VER_CODE"
+fi
 #PRINT INFORMATION#
 print_cn "- 安装模块#TS-Enhancer-Extreme"
 print_cn "- 作者#XtrLumen"
