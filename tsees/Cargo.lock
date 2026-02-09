@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "tseedemo"
+name = "tsees"
 version = "1.0.0"
 dependencies = [
  "libloading",

@@ -1,9 +1,6 @@
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
-use jni::JNIEnv;
-use jni::sys::jboolean;
-use jni::objects::JClass;
 use ed25519_compact::{PublicKey, Signature};
 
 fn array(path: &Path) -> Option<String> {
@@ -33,14 +30,14 @@ fn list(pwd: &Path) -> Option<String> {
         "bin/cmd",
         "bin/tseed",
         "lib/action.sh",
-        "lib/libsealer.so",
+        "lib/libverify.so",
         "lib/state.sh",
         "lib/util_functions.sh",
         "banner.png",
         "post-fs-data.sh",
         "service.apk",
-        "service.dex",
         "service.sh",
+        "service",
         "uninstall.sh",
         "webui.apk",
         action
@@ -79,23 +76,9 @@ fn verify(pwd: &Path, message: &str) -> bool {
 }
 
 #[no_mangle]
-pub extern "system" fn Java_ts_enhancer_xtr_Main_jsealer(
-    _env: JNIEnv,
-    _class: JClass,
-) -> jboolean {
+pub fn sealer() -> bool {
     let pwd = Path::new("/data/adb/modules/ts_enhancer_extreme");
 
-    let Some(hex) = list(pwd) else {
-        return 0;
-    };
-
-    verify(pwd, &hex) as jboolean
-}
-
-#[no_mangle]
-pub fn rsealer() -> bool {
-    let pwd = Path::new("/data/adb/modules/ts_enhancer_extreme");
-    
     let Some(hex) = list(pwd) else {
         return false;
     };

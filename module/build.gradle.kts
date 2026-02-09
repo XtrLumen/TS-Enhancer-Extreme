@@ -33,9 +33,9 @@ listOf("debug", "release").forEach { variantName ->
 
         dependsOn(
             ":app:assemble$variantCapped",
-            ":dex:compileDex$variantCapped",
-            ":tseed:buildBin$variantCapped",
-            ":sealer:buildLib$variantCapped"
+            ":tseed:buildBind$variantCapped",
+            ":tsees:buildBins$variantCapped",
+            ":tseev:buildLib$variantCapped"
         )
         doFirst {
             with(moduleOutputDir) {
@@ -43,52 +43,60 @@ listOf("debug", "release").forEach { variantName ->
             }
         }
         into(moduleDir)
-        from(project(":app").layout.buildDirectory.file("outputs/apk/$variantLowered")) {
-            include(
-                "app-$variantLowered.apk"
+            from(project(":app").layout.buildDirectory.file("outputs/apk/$variantLowered")) {
+                include(
+                    "app-$variantLowered.apk"
+                )
+                rename(
+                    "app-$variantLowered.apk",
+                    "service.apk"
+                )
+            }
+            from(project(":tsees").file("target/aarch64-linux-android/$variantLowered")) {
+                include(
+                    "tsees"
+                )
+                rename(
+                    "tsees",
+                    "service"
+                )
+            }
+            from("$projectDir/src") {
+                include(
+                    "module.prop"
+                )
+                expand(
+                    "moduleId" to "$moduleId",
+                    "moduleName" to "$moduleName",
+                    "versionName" to "$verName$verType ($verCode-$verHash-$variantLowered)",
+                    "versionCode" to "$verCode"
+                )
+            }
+            from("$projectDir/src") {
+                exclude(
+                    ".DS_Store",
+                    "module.prop"
+                )
+            }
+            from(rootProject.file("README.md")) {
+                rename(
+                    "README.md",
+                    "README4en-US.md"
+                )
+            }
+            from(
+                rootProject.files(
+                    "README4zh-Hans.md",
+                    "README4zh-Hant.md"
+                )
             )
-            rename(
-                "app-$variantLowered.apk",
-                "service.apk"
-            )
-        }
-        from(project(":dex").layout.buildDirectory.file("outputs/dex/$variantLowered"))
-        from("$projectDir/src") {
-            include(
-                "module.prop"
-            )
-            expand(
-                "moduleId" to "$moduleId",
-                "moduleName" to "$moduleName",
-                "versionName" to "$verName$verType ($verCode-$verHash-$variantLowered)",
-                "versionCode" to "$verCode"
-            )
-        }
-        from("$projectDir/src") {
-            exclude(
-                ".DS_Store",
-                "module.prop"
-            )
-        }
-        from(rootProject.file("README.md")) {
-            rename(
-                "README.md",
-                "README4en-US.md"
-            )
-        }
-        from(
-            rootProject.files(
-                "README4zh-Hans.md",
-                "README4zh-Hant.md"
-            )
-        )
         into("bin") {
             from(project(":tseed").file("target/aarch64-linux-android/$variantLowered"))
             include("tseedemo")
         }
         into("lib") {
-            from(project(":sealer").file("target/aarch64-linux-android/$variantLowered"))
-            include("libsealer.so")
+            from(project(":tseev").file("target/aarch64-linux-android/$variantLowered"))
+            include("libverify.so")
         }
     }
 
@@ -125,14 +133,14 @@ listOf("debug", "release").forEach { variantName ->
                             "bin/cmd",
                             "bin/tseed",
                             "lib/action.sh",
-                            "lib/libsealer.so",
+                            "lib/libverify.so",
                             "lib/state.sh",
                             "lib/util_functions.sh",
                             "banner.png",
                             "post-fs-data.sh",
                             "service.apk",
-                            "service.dex",
                             "service.sh",
+                            "service",
                             "uninstall.sh",
                             "webui.apk",
                             "action.sh"

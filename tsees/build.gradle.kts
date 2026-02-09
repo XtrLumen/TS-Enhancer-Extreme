@@ -8,7 +8,7 @@ listOf("Debug", "Release").forEach { variantName ->
     val variantCapped = variantName.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
     val variantLowered = variantName.lowercase()
 
-    tasks.register<Exec>("buildBind$variantCapped") {
+    tasks.register<Exec>("buildBins$variantCapped") {
         group = "build"
         executable("cargo")
         args("ndk", "--target", "aarch64-linux-android", "build")
@@ -17,11 +17,11 @@ listOf("Debug", "Release").forEach { variantName ->
         }
     }
 }
-tasks.register("buildBind") {
+tasks.register("buildBins") {
     group = "build"
 
     dependsOn(
-        "buildBindDebug",
-        "buildBindRelease"
+        "buildBinsDebug",
+        "buildBinsRelease"
     )
 }

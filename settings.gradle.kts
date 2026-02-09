@@ -20,8 +20,8 @@ dependencyResolutionManagement {
 rootProject.name = "TS-Enhancer-Extreme"
 include(
     ":app",
-    ":dex",
+    ":module",
     ":tseed",
-    ":sealer",
-    ":module"
+    ":tsees",
+    ":tseev",
 )

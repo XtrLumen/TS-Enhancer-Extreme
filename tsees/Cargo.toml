@@ -1,16 +1,10 @@
 [package]
-name = "sealer"
+name = "tsees"
+version = "1.0.0"
 edition = "2021"
 
-[lib]
-name = "sealer"
-crate-type = ["cdylib"]
-
 [dependencies]
-hex = "0.4"
-jni = "0.21"
-blake3 = "1.8"
-ed25519-compact = "2.0"
+libloading = "0.9.0"
 
 [profile.release]
 lto = true
