@@ -1,5 +1,6 @@
 build
 target
+.idea
 .gradle
 .kotlin
 .DS_Store

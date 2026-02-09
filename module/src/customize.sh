@@ -17,6 +17,7 @@
 SKIPUNZIP=1
 MIN_RELEASE=10
 RELEASE=$(grep_get_prop ro.build.version.release)
+MODULE_VER=$(grep_prop version "$TMPDIR/module.prop")
 [[ "$(grep_get_prop persist.sys.locale)" == *"zh"* || "$(grep_get_prop ro.product.locale)" == *"zh"* ]] && LOCALE="CN" || LOCALE="EN"
 operate() {
   [ "$LOCALE" = "$1" ] && {
@@ -131,8 +132,8 @@ com.topmiaohan.hidebllist
 #CHECK INTEGRITY#
 unzip -o "$ZIPFILE" 'verify.sh' -d "$TMPDIR" >/dev/null
 [ -f "$TMPDIR/verify.sh" ] || {
-  abort_cn "verify.sh 不存在!"
-  abort_en "verify.sh not exists"
+  abort_cn "无法提取 verify.sh!"
+  abort_en "Unable to extract verify.sh"
 }
 source "$TMPDIR/verify.sh"
 #CHECK ENVIRONMENT#
@@ -153,32 +154,24 @@ source "$TMPDIR/verify.sh"
   abort "***********************************************"
 }
 if [ "$KSU" ]; then
-  print_cn "- 从 KernelSU 应用中安装"
-  print_cn "- KernelSU 版本: $KSU_VER"
-  print_cn "- KernelSU 版本号: $KSU_KERNEL_VER_CODE (kernel) + $KSU_VER_CODE (ksud)"
-  print_en "- Installing from KernelSU app"
-  print_en "- KernelSU version: $KSU_VER"
+  print_cn "- KernelSU版本号: $KSU_KERNEL_VER_CODE (kernel) + $KSU_VER_CODE (ksud)"
+  print_cn "- KernelSU版本: $KSU_VER"
   print_en "- KernelSU version code: $KSU_KERNEL_VER_CODE (kernel) + $KSU_VER_CODE (ksud)"
+  print_en "- KernelSU version: $KSU_VER"
 elif [ "$APATCH" ]; then
-  print_cn "- 从 APatch 应用安装"
-  print_cn "- APatch 版本: $APATCH_VER"
-  print_cn "- APatch 版本号: $APATCH_VER_CODE"
-  print_en "- Installing from APatch app"
-  print_en "- APatch version: $APATCH_VER"
+  print_cn "- APatch版本号: $APATCH_VER_CODE"
+  print_cn "- APatch版本: $APATCH_VER"
   print_en "- APatch version code: $APATCH_VER_CODE"
+  print_en "- APatch version: $APATCH_VER"
 elif [ "$MAGISK_VER" ]; then
-  print_cn "- 从 Magisk 应用安装"
-  print_cn "- Magisk 版本: $MAGISK_VER"
-  print_cn "- Magisk 版本号: $MAGISK_VER_CODE"
-  print_en "- Installing from Magisk app"
-  print_en "- Magisk version: $MAGISK_VER"
+  print_cn "- Magisk版本号: $MAGISK_VER_CODE"
+  print_cn "- Magisk版本: $MAGISK_VER"
   print_en "- Magisk version code: $MAGISK_VER_CODE"
+  print_en "- Magisk version: $MAGISK_VER"
 fi
 #PRINT INFORMATION#
-print_cn "- 安装模块#TS-Enhancer-Extreme"
-print_cn "- 作者#XtrLumen"
-print_en "- Install module TS-Enhancer-Extreme"
-print_en "- Author XtrLumen"
+print_cn "- 正在安装模块: TS-Enhancer-Extreme#XtrLumen#$MODULE_VER"
+print_en "- Install module TS-Enhancer-Extreme#XtrLumen#$MODULE_VER"
 print_cn "- 本模块完全免费"
 print_cn "- 如付费途径获取"
 print_cn "- 请直接申请退款"
