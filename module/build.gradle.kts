@@ -52,15 +52,6 @@ listOf("debug", "release").forEach { variantName ->
                     "service.apk"
                 )
             }
-            from(project(":tsees").file("target/aarch64-linux-android/$variantLowered")) {
-                include(
-                    "tsees"
-                )
-                rename(
-                    "tsees",
-                    "service"
-                )
-            }
             from("$projectDir/src") {
                 include(
                     "module.prop"
@@ -93,6 +84,8 @@ listOf("debug", "release").forEach { variantName ->
         into("bin") {
             from(project(":tseed").file("target/aarch64-linux-android/$variantLowered"))
             include("tseedemo")
+            from(project(":tsees").file("target/aarch64-linux-android/$variantLowered"))
+            include("tsees")
         }
         into("lib") {
             from(project(":tseev").file("target/aarch64-linux-android/$variantLowered"))
@@ -132,6 +125,7 @@ listOf("debug", "release").forEach { variantName ->
                         listOf(
                             "bin/cmd",
                             "bin/tseed",
+                            "bin/tsees",
                             "lib/action.sh",
                             "lib/libverify.so",
                             "lib/state.sh",
@@ -140,7 +134,6 @@ listOf("debug", "release").forEach { variantName ->
                             "post-fs-data.sh",
                             "service.apk",
                             "service.sh",
-                            "service",
                             "uninstall.sh",
                             "webui.apk",
                             "action.sh"

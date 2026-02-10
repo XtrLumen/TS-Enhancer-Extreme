@@ -63,7 +63,6 @@ post-fs-data.sh
 uninstall.sh
 service.apk
 service.sh
-service
 module.prop
 banner.png
 webui.apk
@@ -73,9 +72,9 @@ mistylake
 #POST PROCESS#
 NES="
 $SD/.tsee_state.sh
-$MODPATH/service
 $MODPATH/bin/cmd
 $MODPATH/bin/tseed
+$MODPATH/bin/tsees
 $MODPATH/bin/tseedemo
 "
 KEYBOX="$TSCONFIG/keybox.xml"

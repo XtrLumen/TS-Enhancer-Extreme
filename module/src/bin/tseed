@@ -197,6 +197,8 @@ Options:
 [ "$1" = "" ] && help && exit 2
 if sed -n '2p' "$TSMODDIR/module.prop" | grep -q -F -e "OSS"; then
   NICENAME="TrickyStoreOSS"
+elif sed -n '2p' "$TSMODDIR/module.prop" | grep -q -F -e "Simulator"; then
+  NICENAME="TEESimulator"
 else
   NICENAME="TrickyStore"
 fi
@@ -244,15 +246,15 @@ case "$1" in
     help
     ;;
   -stop)
-    kill -9 "$(pidof "TSEnhancerExtreme")"
+    kill -9 "$(pidof "tsees")"
     ;;
   -start)
     (
-    ../service >> /data/adb/ts_enhancer_extreme/log/log.log
+    $TSEEBIN/tsees >> /data/adb/ts_enhancer_extreme/log/log.log
     ) &
     ;;
   -state)
-    if pidof "TSEnhancerExtreme" >/dev/null; then
+    if pidof "tsees" >/dev/null; then
       echo "true"
     else
       echo "false"

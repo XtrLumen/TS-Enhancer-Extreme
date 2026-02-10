@@ -29,6 +29,7 @@ fn list(pwd: &Path) -> Option<String> {
     let lists = [
         "bin/cmd",
         "bin/tseed",
+        "bin/tsees",
         "lib/action.sh",
         "lib/libverify.so",
         "lib/state.sh",
@@ -37,7 +38,6 @@ fn list(pwd: &Path) -> Option<String> {
         "post-fs-data.sh",
         "service.apk",
         "service.sh",
-        "service",
         "uninstall.sh",
         "webui.apk",
         action
