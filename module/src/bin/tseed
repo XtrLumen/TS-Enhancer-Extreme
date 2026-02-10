@@ -30,7 +30,7 @@ Arguments:
   --staterefresh
   --passpropstate
   --conflictappcheck
-  --conflictmodcheck [Extra |-m|-o| ]
+  --conflictmodcheck [Extra |-s| ]
   --packagelistupdate [Extra |-a| ]
   --securitypatchpropsync
   --securitypatchdatefetch
@@ -526,16 +526,15 @@ echo "conflictmodcheck
 Usage: tseed conflictmodcheck <Basic arguments>
 
 Arguments:
-  -m
-  -o
+  -s
 
 Options:
   -h, -help"
 )
-functions_cn WAY="下一次启动时被移除."
-functions_en WAY="upon the next boot."
 functions_cn DES="此模块与TS-Enhancer-Extreme模块证实冲突,已被添加移除标签,将在"
+functions_cn WAY="下一次启动时被移除."
 functions_en DES="This module has been confirmed to conflict with the TS-Enhancer-Extreme module. It has been tagged for removal and will be removed "
+functions_en WAY="upon the next boot."
 conflictdes_all() ( sed -i "s|^description=.*|description=$DES$WAY|" "/data/adb/modules/$MODULE/module.prop"; )
 MODULESUPDATEDIR="$ADB/modules_update"
 CONFLICT="
@@ -561,23 +560,11 @@ TA_utl
 .TA_utl
 Yamabukiko
 "
-OFSCONFLICT="$RMRFCONFLICT $CONFLICT"
 case "$1" in
   -h|-help)
     help
     ;;
-  -overlayfsmode)
-    functions_cn WAY="两次重新启动后被移除."
-    functions_en WAY="after two reboots."
-    for MODULE in $OFSCONFLICT; do
-      [ -d "$MODULESDIR/$MODULE" ] && {
-        conflictdes_all
-        touch "$MODULESDIR/$MODULE/disable"
-        touch "$MODULESDIR/$MODULE/remove"
-      }
-    done
-    ;;
-  -magicmountmode)
+  -servicemode)
     sleep 2s
     for MODULE in $CONFLICT; do
       [ -d "$MODULESDIR/$MODULE" ] && {
@@ -595,33 +582,22 @@ case "$1" in
     done
     ;;
 esac
-if [[ -f "$ADB/ap/modules.img" || -f "$ADB/ksu/modules.img" ]]; then
-  for MODULE in $CONFLICT; do
-    [ -d "$MODULESDIR/$MODULE" ] && {
-      conflictdes_all
-      touch "$MODULESDIR/$MODULE/update"
-      touch "$MODULESDIR/$MODULE/disable"
-      touch "$MODULESDIR/$MODULE/remove"
-      rm -f "$MODULESUPDATEDIR/uninstall.sh"
-      rm -f "$MODULESDIR/$MODULE/uninstall.sh"
-    }
-  done
-  for RMRFMODULE in $RMRFCONFLICT; do
-    [ -d "$MODULESDIR/$RMRFMODULE" ] && {
-      (cd "$MODULESDIR/$RMRFMODULE"; ./uninstall.sh)
-      rm -rf "$MODULESDIR/$RMRFMODULE"
-    }
-  done
-else
-  for MODULE in $OFSCONFLICT; do
-    [ -d "$MODULESDIR/$MODULE" ] && {
-      conflictdes_all
-      touch "$MODULESDIR/$MODULE/update"
-      touch "$MODULESDIR/$MODULE/disable"
-      touch "$MODULESDIR/$MODULE/remove"
-    }
-  done
-fi
+for MODULE in $CONFLICT; do
+  [ -d "$MODULESDIR/$MODULE" ] && {
+    conflictdes_all
+    touch "$MODULESDIR/$MODULE/update"
+    touch "$MODULESDIR/$MODULE/disable"
+    touch "$MODULESDIR/$MODULE/remove"
+    rm -f "$MODULESUPDATEDIR/uninstall.sh"
+    rm -f "$MODULESDIR/$MODULE/uninstall.sh"
+  }
+done
+for RMRFMODULE in $RMRFCONFLICT; do
+  [ -d "$MODULESDIR/$RMRFMODULE" ] && {
+    (cd "$MODULESDIR/$RMRFMODULE"; ./uninstall.sh)
+    rm -rf "$MODULESDIR/$RMRFMODULE"
+  }
+done
 }
 
 securitypatchpropsync() {
@@ -658,8 +634,7 @@ fi
 }
 
 case "$1:$2" in
-  "--conflictmodcheck:-m") conflictmodcheck -magicmountmode; exit 0;;
-  "--conflictmodcheck:-o") conflictmodcheck -overlayfsmode; exit 0;;
+  "--conflictmodcheck:-s") conflictmodcheck -servicemode; exit 0;;
   "--packagelistupdate:-a") packagelistupdate -action; exit ;;
   "--stealkeybox:"*) stealkeybox "$2"; exit ;;
   "--tseectl:"*) tseectl "$2"; exit ;;
