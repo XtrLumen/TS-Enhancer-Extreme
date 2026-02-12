@@ -1,3 +1,4 @@
+#!/bin/sh
 #
 # This file is part of TS-Enhancer-Extreme.
 #
@@ -250,7 +251,7 @@ case "$1" in
     ;;
   -start)
     (
-    $TSEEBIN/tsees >> /data/adb/ts_enhancer_extreme/log/log.log
+    $TSEEBIN/tsees
     ) &
     ;;
   -state)
@@ -640,7 +641,7 @@ case "$1:$2" in
   "--tseectl:"*) tseectl "$2"; exit ;;
   "--tsctl:"*) tsctl "$2"; exit ;;
 esac
-version() { echo "tseed 0.8.2.1" ; exit; }
+version() { echo "tseed 1.0.0" ; exit; }
 for ARG in "$@"; do
   case "$ARG" in
     -h|--help) help; exit ;;

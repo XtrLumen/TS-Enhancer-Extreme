@@ -1,9 +1,12 @@
+cargo-features = ["trim-paths"]
+
 [package]
 name = "tseedemo"
-version = "1.0.0"
 edition = "2021"
+authors = ["XtrLumen"]
 
 [dependencies]
+libc = "1.0.0-alpha.3"
 libloading = "0.9.0"
 
 [profile.release]
@@ -12,5 +15,6 @@ strip = true
 debug = false
 panic = "abort"
 opt-level = "z"
+trim-paths = "all"
 incremental = false
 codegen-units = 1

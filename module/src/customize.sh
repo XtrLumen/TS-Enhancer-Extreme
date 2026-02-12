@@ -158,7 +158,7 @@ source "$TMPDIR/verify.sh"
   print_en "! Minimal supported android version is $MIN_RELEASE"
   abort "***********************************************"
 }
-[ -f "$ADB/.overlayfs_enable" ] || { [ -f "$ADB/ksu/mount_system" ] && sed -n '1p' "$ADB/ksu/mount_system" | grep -q "OVERLAYFS"; } && {
+[ -f "$ADB/.overlayfs_enable" ] || { [ -f "$ADB/ksu/mount_system" ] && cat "$ADB/ksu/mount_system" | grep -q "OVERLAYFS"; } && {
   ui_print "***********************************************"
   print_cn "! 不受支持的挂载系统 OverlayFS"
   print_cn "! 由于冲突模块排除功能在此模式无法正常工作"
@@ -276,7 +276,10 @@ cp -f "$TSEECONFIG/keybox.xml" "$KEYBOX"
     ' > "$TSEECONFIG/usr.txt"
   }
 }
-[[ "$(grep_get_prop ro.product.brand)" == "OnePlus" ]] && { grep -qx "com.oplus.engineermode" "$TSEECONFIG/sys.txt" || printf "\n%s" "com.oplus.engineermode" >> "$TSEECONFIG/sys.txt"; }
+[[ "$(grep_get_prop ro.product.brand)" == "OnePlus" ]] && {
+  grep -qx "com.oplus.engineermode" "$TSEECONFIG/sys.txt" || printf "\n%s" "com.oplus.engineermode" >> "$TSEECONFIG/sys.txt"
+  grep -qx "com.coloros.sceneservice" "$TSEECONFIG/sys.txt" || printf "\n%s" "com.coloros.sceneservice" >> "$TSEECONFIG/sys.txt"
+}
 print_cn "- 获取包名添加"
 print_en "- Getting package list & adding target"
 { pm list packages -3 | sed 's/^package://' | grep -vFf "$TSEECONFIG/usr.txt" ; cat "$TSEECONFIG/sys.txt"; } > "$TSCONFIG/target.txt"

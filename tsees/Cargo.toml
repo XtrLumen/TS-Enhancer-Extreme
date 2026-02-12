@@ -2,12 +2,13 @@ cargo-features = ["trim-paths"]
 
 [package]
 name = "tsees"
-version = "1.0.0"
 edition = "2021"
+authors = ["XtrLumen"]
 
 [dependencies]
+libc = "1.0.0-alpha.3"
 libloading = "0.9.0"
-libc = "0.2.180"
+
 
 [profile.release]
 lto = true

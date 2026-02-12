@@ -1,0 +1,12 @@
+for ARG in "$@"; do
+  case "$ARG" in
+    build)
+      echo "cargo ndk --target aarch64-linux-android build --release"
+      cargo ndk --target aarch64-linux-android build --release
+      ;;
+    clean)
+      echo "cargo clean"
+      cargo clean
+      ;;
+  esac
+done
