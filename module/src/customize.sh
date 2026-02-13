@@ -282,7 +282,11 @@ cp -f "$TSEECONFIG/keybox.xml" "$KEYBOX"
 }
 print_cn "- 获取包名添加"
 print_en "- Getting package list & adding target"
-{ pm list packages -3 | sed 's/^package://' | grep -vFf "$TSEECONFIG/usr.txt" ; cat "$TSEECONFIG/sys.txt"; } > "$TSCONFIG/target.txt"
+if [ -f "$TSEECONFIG/blacklist" ]; then
+  cat "$TSEECONFIG/sys.txt" > "$TSCONFIG/target.txt"
+else
+  { pm list packages -3 | sed 's/^package://' | grep -vFf "$TSEECONFIG/usr.txt" ; cat "$TSEECONFIG/sys.txt"; } > "$TSCONFIG/target.txt"
+fi
 ##END##
 
 ##CONFLICT CHECK##

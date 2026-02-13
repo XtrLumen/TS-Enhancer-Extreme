@@ -339,7 +339,11 @@ conflictappcheck() {
 
 packagelistupdate() {
   [ "$1" = "-action" ] && PATH="$BACK"
-  { pm list packages -3 | sed 's/^package://' | grep -vFf "$TSEECONFIG/usr.txt" ; cat "$TSEECONFIG/sys.txt"; } > "$TSCONFIG/target.txt"
+  if [ -f "$TSEECONFIG/blacklist" ]; then
+    cat "$TSEECONFIG/sys.txt" > "$TSCONFIG/target.txt"
+  else
+    { pm list packages -3 | sed 's/^package://' | grep -vFf "$TSEECONFIG/usr.txt" ; cat "$TSEECONFIG/sys.txt"; } > "$TSCONFIG/target.txt"
+  fi
 }
 
 startwebui() {
