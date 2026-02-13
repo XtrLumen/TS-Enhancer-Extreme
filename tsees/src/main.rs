@@ -32,7 +32,6 @@ fn logout(level: char, msg: &str) {
         libc::localtime_r(&ts.tv_sec, &mut tm);
         //时间格式分割
         let finaltime = format!("{:02}-{:02} {:02}:{:02}:{:02}.{:03}", tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, ts.tv_nsec / 1_000_000);
-        //表达式结束
         (finaltime, libc::getpid(), libc::gettid())
     };
     OpenOptions::new().create(true).append(true).open("/data/adb/ts_enhancer_extreme/log/log.log").and_then(|mut f|
@@ -154,7 +153,7 @@ fn main() {
             tx2
         );
     });
-    //捕获状态
+    //接收状态
     let res1 = rx1.recv().unwrap();
     let res2 = rx2.recv().unwrap();
     if res1 && res2 {

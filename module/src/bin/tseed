@@ -17,7 +17,7 @@
 #
 
 help() {
-echo "Tsee cli
+  echo "Tsee cli
 
 Usage: tseed <Arguments> <Extra arguments>
 
@@ -42,148 +42,210 @@ Options:
 }
 
 error() {
-echo "error: unknown argument '"$1"'
+  echo "error: unknown argument '"$1"'
 
 Usage: tseed "$2"
 
 For more information, try '"$3"'."
-exit 2
+  exit 2
 }
 [ $# -eq 0 ] && help && exit 2
-source "/data/adb/modules/ts_enhancer_extreme/lib/util_functions.sh"
+
+##VARIABLE##
+#ALIAS#
+TS="tricky_store"
+TSEE="ts_enhancer_extreme"
+S="service.sh"
+D=".tsee_state.sh"
+P="post-fs-data.sh"
+#ZERO LEVEL#
+ADB="/data/adb"
+#ONE LEVEL#
+TSCONFIG="$ADB/$TS"
+TSEECONFIG="$ADB/$TSEE"
+MODULESDIR="$ADB/modules"
+#TWO LEVEL#
+TSEEMODDIR="$MODULESDIR/$TSEE"
+TSMODDIR="$MODULESDIR/$TS"
+#THREE LEVEL#
+MULTIPLETYPE="$TSEECONFIG/multiple.txt"
+KERNELTYPE="$TSEECONFIG/kernel.txt"
+TSEELOG="$TSEECONFIG/log/log.log"
+TSEEBIN="$TSEEMODDIR/bin"
+TYPE="$TSEECONFIG/root.txt"
+#OTHERS#
 BACK="$PATH"
 PATH="$TSEEBIN:$PATH"
-TSCONFIG="$ADB/$TS"
-functions_cn() { operate "CN" "functions" "$@"; }
-functions_en() { operate "EN" "functions" "$@"; }
-logce () { echo "$1" ; logc "$1"; }
-crawl() {
-if command -v curl >/dev/null 2>&1; then
-  curl --connect-timeout 10 -Ls "$1"
-elif PATH="$ADB/ap/bin:$ADB/ksu/bin:$ADB/magisk:$PATH" && command -v busybox >/dev/null 2>&1; then
-  busybox wget -T 10 --no-check-certificate -qO- "$1"
-fi
-}
+##END##
 
-rootdetect() {
-DMESGLOG="$TSEECONFIG/dmesg.log"
-KERNELSU_KTAG=0
-APATCH_KTAG=0
-MAGISK_KTAG=0
-KERNELSUTAG=0
-SUCKYSUTAG=0
-APATCHTAG=0
-MAGISKTAG=0
-dmesg > "$DMESGLOG"
-grep -q -F -e "KernelSU" "$DMESGLOG" && {
-  KERNELSU_KTAG=1
-  [[ -d "$ADB/ksu" && -f "$ADB/ksud" ]] && {
-    if grep -q -F -e "KP hook sukisu_kpm" "$DMESGLOG" || [[ "$($ADB/ksud -V 2>/dev/null)" == *"zako"* ]]; then
-      SUCKYSUTAG=1
-    else
-      KERNELSUTAG=1
-    fi
+##FUNCTIONS##
+#MULTILINGUAL#
+[[ "$(getprop persist.sys.locale)" == *"zh"* || "$(getprop ro.product.locale)" == *"zh"* ]] && LOCALE="CN" || LOCALE="EN"
+operate() {
+  [ "$LOCALE" = "$1" ] && {
+    shift
+    local operation="$1"
+    shift
+    case "$operation" in
+      echo)
+        if [ "$1" = "-n" ]; then
+          shift
+          echo -n "$@"
+        else
+          echo "$@"
+        fi
+        ;;
+      functions)
+        eval "${1%=*}=\"${1#*=}\""
+        ;;
+    esac
   }
 }
-grep -q -F -e "/debug_ramdisk/magisk" -e "magiskinit" "$DMESGLOG" && {
-  MAGISK_KTAG=1
-  [[ -d "$ADB/magisk" && -f "$ADB/magisk.db" ]] && MAGISKTAG=1
+functions_cn() { operate "CN" "functions" "$@"; }
+functions_en() { operate "EN" "functions" "$@"; }
+echo_cn() { operate "CN" "echo" "$@"; }
+echo_en() { operate "EN" "echo" "$@"; }
+#OTHER#
+logce() { echo "$2" ; echo "$(date "+%m-%d %H:%M:%S.$(date +%3N)")  $$  $$ $1 System.out: [TSEE]<CLI>$2" >> "$TSEELOG"; }
+logcei() { logce "I" "$1"; }
+logcee() { logce "E" "$1"; }
+detect() {
+  if [ $? -eq 0 ]; then
+    echo_cn "完毕"
+    echo_en "Complete"
+  else
+    echo_cn "失败"
+    echo_en "Failed"
+  fi
 }
-grep -q -F -e "KP I commit_common_su" "$DMESGLOG" && {
-  APATCH_KTAG=1
-  [[ -d "$ADB/ap" && -f "$ADB/apd" ]] && APATCHTAG=1
+crawl() {
+  if command -v curl >/dev/null 2>&1; then
+    curl --connect-timeout 10 -Ls "$1"
+  elif PATH="$ADB/ap/bin:$ADB/ksu/bin:$ADB/magisk:$PATH" && command -v busybox >/dev/null 2>&1; then
+    busybox wget -T 10 --no-check-certificate -qO- "$1"
+  fi
 }
-if [ $(( KERNELSUTAG + SUCKYSUTAG + APATCHTAG + MAGISKTAG )) -gt 1 ]; then
-  touch "$MULTIPLETYPE"
-  [ $MAGISKTAG -eq 1 ] && echo -n "Magisk," >> "$MULTIPLETYPE"
-  [ $KERNELSUTAG -eq 1 ] && echo -n "KernelSU," >> "$MULTIPLETYPE"
-  [ $APATCHTAG -eq 1 ] && echo -n "APatch," >> "$MULTIPLETYPE"
-  [ $SUCKYSUTAG -eq 1 ] && echo -n "SuckySU" >> "$MULTIPLETYPE"
-  sed -i 's/,$//' "$MULTIPLETYPE"
-  ROOT="Multiple"
-elif [ $KERNELSUTAG -eq 1 ]; then
-  ROOT="KernelSU"
-elif [ $SUCKYSUTAG -eq 1 ]; then
-  ROOT="SuckySU"
-elif [ $APATCHTAG -eq 1 ]; then
-  ROOT="APatch"
-elif [ $MAGISKTAG -eq 1 ]; then
-  ROOT="Magisk"
-fi
-[ -z "$ROOT" ] && ROOT="NULL"
-echo -n "$ROOT" > "$TYPE"
-rm -f "$DMESGLOG"
-[ $(( KERNELSU_KTAG + APATCH_KTAG + MAGISK_KTAG )) -gt 1 ] && [ ! "$ROOT" = "Multiple" ] && {
-  touch "$KERNELTYPE"
-  [ $MAGISK_KTAG -eq 1 ] && [ ! "$ROOT" = "Magisk" ] && echo -n "Magisk," >> "$KERNELTYPE"
-  [ $KERNELSU_KTAG -eq 1 ] && [ ! "$ROOT" = "KernelSU" ] && echo -n "KernelSU," >> "$KERNELTYPE"
-  [ $APATCH_KTAG -eq 1 ] && [ ! "$ROOT" = "APatch" ] && echo -n "APatch" >> "$KERNELTYPE"
-  sed -i 's/,$//' "$KERNELTYPE"
-}
+##END##
+
+rootdetect() {
+  DMESGLOG="$TSEECONFIG/dmesg.log"
+  KERNELSU_KTAG=0
+  APATCH_KTAG=0
+  MAGISK_KTAG=0
+  KERNELSUTAG=0
+  SUCKYSUTAG=0
+  APATCHTAG=0
+  MAGISKTAG=0
+  dmesg > "$DMESGLOG"
+  grep -q -F -e "KernelSU" "$DMESGLOG" && {
+    KERNELSU_KTAG=1
+    [[ -d "$ADB/ksu" && -f "$ADB/ksud" ]] && {
+      if grep -q -F -e "KP hook sukisu_kpm" "$DMESGLOG" || [[ "$($ADB/ksud -V 2>/dev/null)" == *"zako"* ]]; then
+        SUCKYSUTAG=1
+      else
+        KERNELSUTAG=1
+      fi
+    }
+  }
+  grep -q -F -e "/debug_ramdisk/magisk" -e "magiskinit" "$DMESGLOG" && {
+    MAGISK_KTAG=1
+    [[ -d "$ADB/magisk" && -f "$ADB/magisk.db" ]] && MAGISKTAG=1
+  }
+  grep -q -F -e "KP I commit_common_su" "$DMESGLOG" && {
+    APATCH_KTAG=1
+    [[ -d "$ADB/ap" && -f "$ADB/apd" ]] && APATCHTAG=1
+  }
+  if [ $(( KERNELSUTAG + SUCKYSUTAG + APATCHTAG + MAGISKTAG )) -gt 1 ]; then
+    touch "$MULTIPLETYPE"
+    [ $MAGISKTAG -eq 1 ] && echo -n "Magisk," >> "$MULTIPLETYPE"
+    [ $KERNELSUTAG -eq 1 ] && echo -n "KernelSU," >> "$MULTIPLETYPE"
+    [ $APATCHTAG -eq 1 ] && echo -n "APatch," >> "$MULTIPLETYPE"
+    [ $SUCKYSUTAG -eq 1 ] && echo -n "SuckySU" >> "$MULTIPLETYPE"
+    sed -i 's/,$//' "$MULTIPLETYPE"
+    ROOT="Multiple"
+  elif [ $KERNELSUTAG -eq 1 ]; then
+    ROOT="KernelSU"
+  elif [ $SUCKYSUTAG -eq 1 ]; then
+    ROOT="SuckySU"
+  elif [ $APATCHTAG -eq 1 ]; then
+    ROOT="APatch"
+  elif [ $MAGISKTAG -eq 1 ]; then
+    ROOT="Magisk"
+  fi
+  [ -z "$ROOT" ] && ROOT="NULL"
+  echo -n "$ROOT" > "$TYPE"
+  rm -f "$DMESGLOG"
+  [ $(( KERNELSU_KTAG + APATCH_KTAG + MAGISK_KTAG )) -gt 1 ] && [ ! "$ROOT" = "Multiple" ] && {
+    touch "$KERNELTYPE"
+    [ $MAGISK_KTAG -eq 1 ] && [ ! "$ROOT" = "Magisk" ] && echo -n "Magisk," >> "$KERNELTYPE"
+    [ $KERNELSU_KTAG -eq 1 ] && [ ! "$ROOT" = "KernelSU" ] && echo -n "KernelSU," >> "$KERNELTYPE"
+    [ $APATCH_KTAG -eq 1 ] && [ ! "$ROOT" = "APatch" ] && echo -n "APatch" >> "$KERNELTYPE"
+    sed -i 's/,$//' "$KERNELTYPE"
+  }
 }
 
 passpropstate() {
-check_missing_match_prop() {
-  local NAME=$1
-  local EXPECTED=$2
-  local VALUE=$(getprop $NAME)
-  [ -z $VALUE ] || [ $VALUE = $EXPECTED ] || resetprop $NAME $EXPECTED
-  [ -z $VALUE ] && resetprop $NAME $EXPECTED
-}
-contains_reset_prop() {
-  local NAME=$1
-  local CONTAINS=$2
-  local NEWVAL=$3
-  [[ "$(getprop $NAME)" = *"$CONTAINS"* ]] && resetprop $NAME $NEWVAL
-}
-check_missing_prop() {
-  local NAME=$1
-  local EXPECTED=$2
-  local VALUE=$(getprop $NAME)
-  [ -z $VALUE ] && resetprop $NAME $EXPECTED
-}
-check_reset_prop() {
-  local NAME=$1
-  local EXPECTED=$2
-  local VALUE=$(getprop $NAME)
-  [ -z $VALUE ] || [ $VALUE = $EXPECTED ] || resetprop $NAME $EXPECTED
-}
-vbmeta_size="$(busybox blockdev --getbsz "/dev/block/by-name/vbmeta"$(getprop ro.boot.slot_suffix)"")"; [ -n "$vbmeta_size" ] || vbmeta_size="4096"
-resetprop "sys.usb.adb.disabled" " "
-check_missing_match_prop "ro.boot.vbmeta.device_state" "locked"
-check_missing_match_prop "ro.boot.verifiedbootstate" "green"
-check_missing_match_prop "ro.boot.veritymode" "enforcing"
-check_missing_match_prop "ro.boot.warranty_bit" "0"
-check_missing_match_prop "ro.boot.flash.locked" "1"
-contains_reset_prop "vendor.boot.bootmode" "recovery" "unknown"
-contains_reset_prop "ro.boot.bootmode" "recovery" "unknown"
-contains_reset_prop "ro.bootmode" "recovery" "unknown"
-check_missing_prop "ro.boot.vbmeta.invalidate_on_error" yes
-check_missing_prop "ro.boot.vbmeta.size" "$vbmeta_size"
-check_missing_prop "ro.boot.vbmeta.hash_alg" "sha256"
-check_missing_prop "ro.boot.vbmeta.avb_version" "1.2"
-check_reset_prop "vendor.boot.vbmeta.device_state" "locked"
-check_reset_prop "vendor.boot.verifiedbootstate" "green"
-check_reset_prop "ro.secureboot.lockstate" "locked"
-check_reset_prop "ro.boot.realmebootstate" "green"
-check_reset_prop "ro.vendor.boot.warranty_bit" "0"
-check_reset_prop "sys.oem_unlock_allowed" "0"
-check_reset_prop "ro.boot.realme.lockstate" "1"
-check_reset_prop "ro.build.tags" "release-keys"
-check_reset_prop "ro.crypto.state" "encrypted"
-check_reset_prop "ro.vendor.warranty_bit" "0"
-check_reset_prop "ro.force.debuggable" "0"
-check_reset_prop "ro.build.type" "user"
-check_reset_prop "ro.warranty_bit" "0"
-check_reset_prop "ro.debuggable" "0"
-check_reset_prop "ro.kernel.qemu" ""
-check_reset_prop "ro.adb.secure" "1"
-check_reset_prop "ro.secure" "1"
+  check_missing_match_prop() {
+    local NAME=$1
+    local EXPECTED=$2
+    local VALUE=$(getprop $NAME)
+    [ -z $VALUE ] || [ $VALUE = $EXPECTED ] || resetprop $NAME $EXPECTED
+    [ -z $VALUE ] && resetprop $NAME $EXPECTED
+  }
+  contains_reset_prop() {
+    local NAME=$1
+    local CONTAINS=$2
+    local NEWVAL=$3
+    [[ "$(getprop $NAME)" = *"$CONTAINS"* ]] && resetprop $NAME $NEWVAL
+  }
+  check_missing_prop() {
+    local NAME=$1
+    local EXPECTED=$2
+    local VALUE=$(getprop $NAME)
+    [ -z $VALUE ] && resetprop $NAME $EXPECTED
+  }
+  check_reset_prop() {
+    local NAME=$1
+    local EXPECTED=$2
+    local VALUE=$(getprop $NAME)
+    [ -z $VALUE ] || [ $VALUE = $EXPECTED ] || resetprop $NAME $EXPECTED
+  }
+  vbmeta_size="$(busybox blockdev --getbsz "/dev/block/by-name/vbmeta"$(getprop ro.boot.slot_suffix)"")"; [ -n "$vbmeta_size" ] || vbmeta_size="4096"
+  resetprop "sys.usb.adb.disabled" " "
+  check_missing_match_prop "ro.boot.vbmeta.device_state" "locked"
+  check_missing_match_prop "ro.boot.verifiedbootstate" "green"
+  check_missing_match_prop "ro.boot.veritymode" "enforcing"
+  check_missing_match_prop "ro.boot.warranty_bit" "0"
+  check_missing_match_prop "ro.boot.flash.locked" "1"
+  contains_reset_prop "vendor.boot.bootmode" "recovery" "unknown"
+  contains_reset_prop "ro.boot.bootmode" "recovery" "unknown"
+  contains_reset_prop "ro.bootmode" "recovery" "unknown"
+  check_missing_prop "ro.boot.vbmeta.invalidate_on_error" yes
+  check_missing_prop "ro.boot.vbmeta.size" "$vbmeta_size"
+  check_missing_prop "ro.boot.vbmeta.hash_alg" "sha256"
+  check_missing_prop "ro.boot.vbmeta.avb_version" "1.2"
+  check_reset_prop "vendor.boot.vbmeta.device_state" "locked"
+  check_reset_prop "vendor.boot.verifiedbootstate" "green"
+  check_reset_prop "ro.secureboot.lockstate" "locked"
+  check_reset_prop "ro.boot.realmebootstate" "green"
+  check_reset_prop "ro.vendor.boot.warranty_bit" "0"
+  check_reset_prop "sys.oem_unlock_allowed" "0"
+  check_reset_prop "ro.boot.realme.lockstate" "1"
+  check_reset_prop "ro.build.tags" "release-keys"
+  check_reset_prop "ro.crypto.state" "encrypted"
+  check_reset_prop "ro.vendor.warranty_bit" "0"
+  check_reset_prop "ro.force.debuggable" "0"
+  check_reset_prop "ro.build.type" "user"
+  check_reset_prop "ro.warranty_bit" "0"
+  check_reset_prop "ro.debuggable" "0"
+  check_reset_prop "ro.kernel.qemu" ""
+  check_reset_prop "ro.adb.secure" "1"
+  check_reset_prop "ro.secure" "1"
 }
 
 tsctl() {
-help() (
-echo "tsctl
+  help() (
+    echo "tsctl
 
 Usage: tseed tsctl <Basic arguments>
 
@@ -194,42 +256,42 @@ Arguments:
 
 Options:
   -h, -help"
-)
-[ "$1" = "" ] && help && exit 2
-if sed -n '2p' "$TSMODDIR/module.prop" | grep -q -F -e "OSS"; then
-  NICENAME="TrickyStoreOSS"
-elif sed -n '2p' "$TSMODDIR/module.prop" | grep -q -F -e "Simulator"; then
-  NICENAME="TEESimulator"
-else
-  NICENAME="TrickyStore"
-fi
-case "$1" in
-  -h|-help)
-    help
-    ;;
-  -stop)
-    kill -9 "$(pidof "$NICENAME")"
-    ;;
-  -start)
-    (
-    chmod +x $TSMODDIR/service.sh
-    (exec $TSMODDIR/service.sh)
-    ) &
-    ;;
-  -state)
-    if pidof "$NICENAME" >/dev/null; then
-      echo "true"
-    else
-      echo "false"
-    fi
-    ;;
-  *) error "$1" "tsctl <Basic arguments>" "-help";;
-esac
+  )
+  [ "$1" = "" ] && help && exit 2
+  if sed -n '2p' "$TSMODDIR/module.prop" | grep -q -F "OSS"; then
+    NICENAME="TrickyStoreOSS"
+  elif sed -n '2p' "$TSMODDIR/module.prop" | grep -q -F "Simulator"; then
+    NICENAME="TEESimulator"
+  else
+    NICENAME="TrickyStore"
+  fi
+  case "$1" in
+    -h|-help)
+      help
+      ;;
+    -stop)
+      kill -9 "$(pidof "$NICENAME")"
+      ;;
+    -start)
+      (
+      chmod +x $TSMODDIR/service.sh
+      (exec $TSMODDIR/service.sh)
+      ) &
+      ;;
+    -state)
+      if pidof "$NICENAME" >/dev/null; then
+        echo "true"
+      else
+        echo "false"
+      fi
+      ;;
+    *) error "$1" "tsctl <Basic arguments>" "-help";;
+  esac
 }
 
 tseectl() {
-help() (
-echo "tseectl
+  help() (
+    echo "tseectl
 
 Usage: tseed tseectl <Basic arguments>
 
@@ -240,114 +302,138 @@ Arguments:
 
 Options:
   -h, -help"
-)
-[ "$1" = "" ] && help && exit 2
-case "$1" in
-  -h|-help)
-    help
-    ;;
-  -stop)
-    kill -9 "$(pidof "tsees")"
-    ;;
-  -start)
-    (
-    $TSEEBIN/tsees
-    ) &
-    ;;
-  -state)
-    if pidof "tsees" >/dev/null; then
-      echo "true"
-    else
-      echo "false"
-    fi
-    ;;
-  *) error "$1" "tseectl <Basic arguments>" "-help";;
-esac
+  )
+  [ "$1" = "" ] && help && exit 2
+  case "$1" in
+    -h|-help)
+      help
+      ;;
+    -stop)
+      kill -9 "$(pidof "tsees")"
+      ;;
+    -start)
+      (
+      $TSEEBIN/tsees
+      ) &
+      ;;
+    -state)
+      if pidof "tsees" >/dev/null; then
+        echo "true"
+      else
+        echo "false"
+      fi
+      ;;
+    *) error "$1" "tseectl <Basic arguments>" "-help";;
+  esac
 }
 
 conflictappcheck() {
-APPCONFLICT="
-com.lingqian.appbl
-com.topmiaohan.hidebllist
-"
-for PACKAGE in $APPCONFLICT; do
-  pm path $PACKAGE > /dev/null 2>&1 && pm uninstall $PACKAGE > /dev/null 2>&1
-done
+  APPCONFLICT="
+  com.lingqian.appbl
+  com.topmiaohan.hidebllist
+  "
+  for PACKAGE in $APPCONFLICT; do
+    pm path $PACKAGE > /dev/null 2>&1 && pm uninstall $PACKAGE > /dev/null 2>&1
+  done
 }
 
 packagelistupdate() {
-[ "$1" = "-action" ] && PATH="$BACK"
-{ pm list packages -3 | sed 's/^package://' | grep -vFf "$TSEECONFIG/usr.txt" ; cat "$TSEECONFIG/sys.txt"; } > "$TSCONFIG/target.txt"
+  [ "$1" = "-action" ] && PATH="$BACK"
+  { pm list packages -3 | sed 's/^package://' | grep -vFf "$TSEECONFIG/usr.txt" ; cat "$TSEECONFIG/sys.txt"; } > "$TSCONFIG/target.txt"
 }
 
 startwebui() {
-PATH="$BACK"
-start() (
-echo_cn -n "- $1"
-shift
-echo_en -n "- $1"
-shift
-"$@" >/dev/null 2>&1
-detect
-)
-if pm path com.dergoogler.mmrl.wx >/dev/null 2>&1; then
-  start "WebUI-X已安装,启动..." "WebUI-X installed, Launch..." am start -n com.dergoogler.mmrl.wx/.ui.activity.webui.WebUIActivity -e MOD_ID $TSEE
-elif pm path io.github.a13e300.ksuwebui > /dev/null 2>&1; then
-  start "WebUI已安装,启动..." "WebUI-X installed, Launch..." am start -n io.github.a13e300.ksuwebui/.WebUIActivity -e id $TSEE
-else
-  echo_cn -n "- WebUI未安装,执行安装..."
-  echo_en -n "- WebUI not installed. Executing installation..."
-  if pm install "$TSEEMODDIR/webui.apk" >/dev/null 2>&1; then
-    echo_cn "完毕"
-    echo_en "Complete"
-    start "启动..." "Launch..." am start -n io.github.a13e300.ksuwebui/.WebUIActivity -e id $TSEE
+  PATH="$BACK"
+  start() (
+    echo_cn -n "- $1"
+    shift
+    echo_en -n "- $1"
+    shift
+    "$@" >/dev/null 2>&1
+    detect
+  )
+  if pm path com.dergoogler.mmrl.wx >/dev/null 2>&1; then
+    start "WebUI-X已安装,启动..." "WebUI-X installed, Launch..." am start -n com.dergoogler.mmrl.wx/.ui.activity.webui.WebUIActivity -e MOD_ID $TSEE
+  elif pm path io.github.a13e300.ksuwebui > /dev/null 2>&1; then
+    start "WebUI已安装,启动..." "WebUI-X installed, Launch..." am start -n io.github.a13e300.ksuwebui/.WebUIActivity -e id $TSEE
   else
-    echo_cn "失败"
-    echo_en "Failed"
-    exit 1
+    echo_cn -n "- WebUI未安装,执行安装..."
+    echo_en -n "- WebUI not installed. Executing installation..."
+    if pm install "$TSEEMODDIR/webui.apk" >/dev/null 2>&1; then
+      echo_cn "完毕"
+      echo_en "Complete"
+      start "启动..." "Launch..." am start -n io.github.a13e300.ksuwebui/.WebUIActivity -e id $TSEE
+    else
+      echo_cn "失败"
+      echo_en "Failed"
+      exit 1
+    fi
   fi
-fi
 }
 
 passvbhash() {
-debugmode() {
-logce "$1失败,开始DEBUG"
-shift
-logce "$("$@" 2>&1)"
-}
-logce "安装服务"
-if pm install "$TSEEMODDIR/service.apk" >/dev/null 2>&1; then
-  logce "安装完毕"
-  logce "尝试启动"
-  VBH="$(content call --uri content://Provider --method GET)"
-  VBHVALUE="$(echo "$VBH" | grep -oE '[a-f0-9]{64}=VBHash' | grep -oE '[a-f0-9]{64}')"
-  logcat -d | grep -F "[TSEE]" >> "$TSEELOG"
-  logce "$VBH"
-  if [ ${#VBHVALUE} -eq 64 ]; then
-    logce "成功启动"
-    if [ "$(getprop ro.boot.vbmeta.digest)" = "$VBHVALUE" ]; then
-      logce "无需修正,当前属性:"$(getprop ro.boot.vbmeta.digest)""
+  contentapp() {
+    logcei "安装服务"
+    if pm install "$TSEEMODDIR/service.apk" >/dev/null 2>&1; then
+      logcei "安装完毕"
+      logcei "尝试启动"
+      ORIGINAL="$(content call --uri content://Provider --method GET)"
+      VBHVALUE="$(echo "$ORIGINAL" | grep -oE '[a-f0-9]{64}=VBHash' | grep -oE '[a-f0-9]{64}')"
+      logcat -d | grep -F "[TSEE]" >> "$TSEELOG"
+      logcei "$ORIGINAL"
+      if [ ${#VBHVALUE} -eq 64 ] && echo "$VBHVALUE" | grep -q '^[a-f0-9]\{64\}$'; then
+        logcei "成功启动"
+        if [ "$NOW" = "$VBHVALUE" ]; then
+          logcei "无需修正,当前属性:"$NOW""
+        else
+          resetprop -n ro.boot.vbmeta.digest "$VBHVALUE" && logcei "修正完毕,当前属性:"$(getprop ro.boot.vbmeta.digest)""
+        fi
+        [ "$2" = "TS245" ] && {
+          logcei "缓存数据"
+          printf "$VBHVALUE" > "$TSEECONFIG/verifiedboothash.txt"
+        }
+      else
+        logcee "启动失败"
+      fi
+      logcei "卸载服务"
+      pm uninstall io.github.xtrlumen.vbmeta >/dev/null 2>&1
     else
-      resetprop -n ro.boot.vbmeta.digest "$VBHVALUE" && logce "修正完毕,当前属性:"$(getprop ro.boot.vbmeta.digest)""
+      logcee "安装失败,开始DEBUG"
+      logcee "$(pm install $TSEEMODDIR/service.apk 2>&1)"
+      eval "$1"
+    fi
+  }
+  NOW=$(getprop ro.boot.vbmeta.digest)
+  if sed -n '2p' "$TSMODDIR/module.prop" | grep -q -F -e "Tricky" -e "Store" && [ "$(sed -n '4p' "$TSMODDIR/module.prop" | sed -n 's/versionCode=//p')" -ge 245 ]; then
+    if [ -f "$TSEECONFIG/verifiedboothash.txt" ]; then
+      PERSISTENCE=$(sed -n '1p' "$TSEECONFIG/verifiedboothash.txt")
+      if [ ${#PERSISTENCE} -eq 64 ] && echo "$PERSISTENCE" | grep -q '^[a-f0-9]\{64\}$'; then
+        if [ "$NOW" = "$PERSISTENCE" ]; then
+          logcei "无需修正,当前属性:"$NOW""
+        else
+          resetprop -n ro.boot.vbmeta.digest "$PERSISTENCE" && logcei "修正完毕,当前属性:"$(getprop ro.boot.vbmeta.digest)""
+        fi
+      else
+        logcee "缓存无效,重新获取"
+        contentapp "return 1" "TS245" || {
+          logcei "获取失败,生成并持久化随机已验证的启动哈希值"
+          xxd -l 32 -p /dev/urandom | tr -d '\n' > "$TSEECONFIG/verifiedboothash.txt"
+        }
+      fi
+    else
+      contentapp "return 1" "TS245" || {
+        logcei "获取失败,生成并持久化随机已验证的启动哈希值"
+        xxd -l 32 -p /dev/urandom | tr -d '\n' > "$TSEECONFIG/verifiedboothash.txt"
+      }
     fi
   else
-    logce "启动失败"
+    contentapp "exit 1"
   fi
-  logce "卸载服务"
-  if pm uninstall io.github.xtrlumen.vbmeta >/dev/null 2>&1; then
-    logce "卸载完毕"
-  else
-    debugmode "卸载" pm uninstall io.github.xtrlumen.vbmeta
-  fi
-else
-  debugmode "安装" pm install $TSEEMODDIR/service.apk
-  exit 1
-fi
 }
 
 stealkeybox() {
-help() (
-echo "stealkeybox
+  help() (
+    echo "stealkeybox
 
 Usage: tseed stealkeybox <Basic arguments>
 
@@ -358,171 +444,173 @@ Arguments:
 
 Options:
   -h, -help"
-)
-case "$1" in
-  -h|-help)
-    help
-    ;;
-  -a)
-    MAINLINK="https://raw.githubusercontent.com/KOWX712/Tricky-Addon-Update-Target-List/main/.extra"
-    SPARELINK="https://raw.gitmirror.com/KOWX712/Tricky-Addon-Update-Target-List/main/.extra"
-    echo -n "- 下载文件..."
-    if crawl "$MAINLINK" > "$TMPDIR/keybox.hex" || crawl "$SPARELINK" > "$TMPDIR/keybox.hex"; then
-      echo "完毕"
-    else
-      echo "失败"
-      exit 1
-    fi
-    echo -n "- 解码密钥..."
-    echo "$(printf "$(sed 's/\(..\)/\\x\1/g' "$TMPDIR/keybox.hex")" | tr -d '\0' | base64 -d)" > "$TMPDIR/keybox.xml"
-    if grep -q -F -e "-----BEGIN EC PRIVATE KEY-----" "$TMPDIR/keybox.xml"; then
-      echo "完毕"
-    else
-      echo "失败"
-      exit 1
-    fi
-    echo -n "- 写出文件..."
-    [ -f "$TSCONFIG/keybox.xml" ] && mv "$TSCONFIG/keybox.xml" "$TSCONFIG/keybox.xml.bak"
-    if mv "$TMPDIR/keybox.xml" "$TSCONFIG/keybox.xml"; then
-      echo "完毕"
-    else
-      [ -f "$TSCONFIG/keybox.xml.bak" ] && mv "$TSCONFIG/keybox.xml.bak" "$TSCONFIG/keybox.xml"
-      echo "失败"
-      exit 1
-    fi
-    echo "- 清理缓存"
-    rm -f "$TMPDIR/keybox.hex"
-    rm -f "$TMPDIR/keybox.bin"
-    ;;
-  -b)
-    MAINLINK="https://raw.githubusercontent.com/MeowDump/MeowDump/refs/heads/main/NullVoid/ShockWave.tar"
-    SPARELINK="https://raw.gitmirror.com/MeowDump/MeowDump/refs/heads/main/NullVoid/ShockWave.tar"
-    echo -n "- 下载文件..."
-    if crawl "$MAINLINK" > "$TMPDIR/keybox.b64" || crawl "$SPARELINK" > "$TMPDIR/keybox.b64"; then
-      echo "完毕"
-    else
-      echo "失败"
-      exit 1
-    fi
-    echo -n "- 解码密钥..."
-    base64 -d "$TMPDIR/keybox.b64" | base64 -d | base64 -d | base64 -d | base64 -d | base64 -d | base64 -d | base64 -d | base64 -d | base64 -d | xxd -r -p | tr 'A-Za-z' 'N-ZA-Mn-za-m' > "$TMPDIR/keybox.xml"
-    for WORD in every soul will taste death; do
-      sed -i "s/$WORD//g" "$TMPDIR/keybox.xml"
-    done
-    if grep -q -F -e "-----BEGIN EC PRIVATE KEY-----" "$TMPDIR/keybox.xml"; then
-      echo "完毕"
-    else
-      echo "失败"
-      exit 1
-    fi
-    echo -n "- 写出文件..."
-    [ -f "$TSCONFIG/keybox.xml" ] && mv "$TSCONFIG/keybox.xml" "$TSCONFIG/keybox.xml.bak"
-    if mv "$TMPDIR/keybox.xml" "$TSCONFIG/keybox.xml"; then
-      echo "完毕"
-    else
-      [ -f "$TSCONFIG/keybox.xml.bak" ] && mv "$TSCONFIG/keybox.xml.bak" "$TSCONFIG/keybox.xml"
-      echo "失败"
-      exit 1
-    fi
-    echo "- 清理缓存"
-    rm -f "$TMPDIR/keybox.b64"
-    ;;
-  -c)
-    MAINLINK="https://raw.githubusercontent.com/YurikeyDev/yurikey/refs/heads/main/conf"
-    SPARELINK="https://raw.gitmirror.com/YurikeyDev/yurikey/refs/heads/main/conf"
-    echo -n "- 下载文件..."
-    if crawl "$MAINLINK" > "$TMPDIR/keybox.bin" || crawl "$SPARELINK" > "$TMPDIR/keybox.bin"; then
-      echo "完毕"
-    else
-      echo "失败"
-      exit 1
-    fi
-    echo -n "- 解码密钥..."
-    # strings "$TMPDIR/keybox.bin" | grep -E '^[A-Za-z0-9+/=]+$' | awk 'length($0) >= 500' | base64 -d > "$TMPDIR/keybox.xml" #
-    base64 -d "$TMPDIR/keybox.bin" > "$TMPDIR/keybox.sh"
-    eval $(grep "^KEYBOX_BASE64_PAYLOAD=" "$TMPDIR/keybox.sh")
-    printf '%s' "$KEYBOX_BASE64_PAYLOAD" | base64 -d > "$TMPDIR/keybox.xml"
-    if grep -q -F -e "-----BEGIN EC PRIVATE KEY-----" "$TMPDIR/keybox.xml"; then
-      echo "完毕"
-    else
-      echo "失败"
-      exit 1
-    fi
-    echo -n "- 写出文件..."
-    [ -f "$TSCONFIG/keybox.xml" ] && mv "$TSCONFIG/keybox.xml" "$TSCONFIG/keybox.xml.bak"
-    if mv "$TMPDIR/keybox.xml" "$TSCONFIG/keybox.xml"; then
-      echo "完毕"
-    else
-      [ -f "$TSCONFIG/keybox.xml.bak" ] && mv "$TSCONFIG/keybox.xml.bak" "$TSCONFIG/keybox.xml"
-      echo "失败"
-      exit 1
-    fi
-    echo "- 清理缓存"
-    rm -f "$TMPDIR/keybox.bin"
-    rm -f "$TMPDIR/keybox.sh"
-    ;;
-  *) error "$1" "stealkeybox <Basic arguments>" "-help";;
-esac
+  )
+  case "$1" in
+    -h|-help)
+      help
+      ;;
+    -a)
+      MAINLINK="https://raw.githubusercontent.com/KOWX712/Tricky-Addon-Update-Target-List/main/.extra"
+      SPARELINK="https://raw.gitmirror.com/KOWX712/Tricky-Addon-Update-Target-List/main/.extra"
+      echo -n "- 下载文件..."
+      if crawl "$MAINLINK" > "$TMPDIR/keybox.hex" || crawl "$SPARELINK" > "$TMPDIR/keybox.hex"; then
+        echo "完毕"
+      else
+        echo "失败"
+        exit 1
+      fi
+      echo -n "- 解码密钥..."
+      echo "$(printf "$(sed 's/\(..\)/\\x\1/g' "$TMPDIR/keybox.hex")" | tr -d '\0' | base64 -d)" > "$TMPDIR/keybox.xml"
+      if grep -q -F -e "-----BEGIN EC PRIVATE KEY-----" "$TMPDIR/keybox.xml"; then
+        echo "完毕"
+      else
+        echo "失败"
+        exit 1
+      fi
+      echo -n "- 写出文件..."
+      [ -f "$TSCONFIG/keybox.xml" ] && mv "$TSCONFIG/keybox.xml" "$TSCONFIG/keybox.xml.bak"
+      if mv "$TMPDIR/keybox.xml" "$TSCONFIG/keybox.xml"; then
+        echo "完毕"
+      else
+        [ -f "$TSCONFIG/keybox.xml.bak" ] && mv "$TSCONFIG/keybox.xml.bak" "$TSCONFIG/keybox.xml"
+        echo "失败"
+        exit 1
+      fi
+      echo "- 清理缓存"
+      rm -f "$TMPDIR/keybox.hex"
+      rm -f "$TMPDIR/keybox.bin"
+      ;;
+    -b)
+      MAINLINK="https://raw.githubusercontent.com/MeowDump/MeowDump/refs/heads/main/NullVoid/ShockWave.tar"
+      SPARELINK="https://raw.gitmirror.com/MeowDump/MeowDump/refs/heads/main/NullVoid/ShockWave.tar"
+      echo -n "- 下载文件..."
+      if crawl "$MAINLINK" > "$TMPDIR/keybox.b64" || crawl "$SPARELINK" > "$TMPDIR/keybox.b64"; then
+        echo "完毕"
+      else
+        echo "失败"
+        exit 1
+      fi
+      echo -n "- 解码密钥..."
+      base64 -d "$TMPDIR/keybox.b64" | base64 -d | base64 -d | base64 -d | base64 -d | base64 -d | base64 -d | base64 -d | base64 -d | base64 -d | xxd -r -p | tr 'A-Za-z' 'N-ZA-Mn-za-m' > "$TMPDIR/keybox.xml"
+      for WORD in every soul will taste death; do
+        sed -i "s/$WORD//g" "$TMPDIR/keybox.xml"
+      done
+      if grep -q -F -e "-----BEGIN EC PRIVATE KEY-----" "$TMPDIR/keybox.xml"; then
+        echo "完毕"
+      else
+        echo "失败"
+        exit 1
+      fi
+      echo -n "- 写出文件..."
+      [ -f "$TSCONFIG/keybox.xml" ] && mv "$TSCONFIG/keybox.xml" "$TSCONFIG/keybox.xml.bak"
+      if mv "$TMPDIR/keybox.xml" "$TSCONFIG/keybox.xml"; then
+        echo "完毕"
+      else
+        [ -f "$TSCONFIG/keybox.xml.bak" ] && mv "$TSCONFIG/keybox.xml.bak" "$TSCONFIG/keybox.xml"
+        echo "失败"
+        exit 1
+      fi
+      echo "- 清理缓存"
+      rm -f "$TMPDIR/keybox.b64"
+      ;;
+    -c)
+      MAINLINK="https://raw.githubusercontent.com/Yurii0307/yurikey/main/key"
+      SPARELINK="https://raw.gitmirror.com/Yurii0307/yurikey/main/key"
+      echo -n "- 下载文件..."
+      if crawl "$MAINLINK" > "$TMPDIR/keybox.bin" || crawl "$SPARELINK" > "$TMPDIR/keybox.bin"; then
+        echo "完毕"
+      else
+        echo "失败"
+        exit 1
+      fi
+      echo -n "- 解码密钥..."
+      base64 -d "$TMPDIR/keybox.bin" > "$TMPDIR/keybox.xml"
+      if grep -q -F -e "-----BEGIN EC PRIVATE KEY-----" "$TMPDIR/keybox.xml"; then
+        echo "完毕"
+      else
+        echo "失败"
+        exit 1
+      fi
+      echo -n "- 写出文件..."
+      [ -f "$TSCONFIG/keybox.xml" ] && mv "$TSCONFIG/keybox.xml" "$TSCONFIG/keybox.xml.bak"
+      if mv "$TMPDIR/keybox.xml" "$TSCONFIG/keybox.xml"; then
+        echo "完毕"
+      else
+        [ -f "$TSCONFIG/keybox.xml.bak" ] && mv "$TSCONFIG/keybox.xml.bak" "$TSCONFIG/keybox.xml"
+        echo "失败"
+        exit 1
+      fi
+      echo "- 清理缓存"
+      rm -f "$TMPDIR/keybox.bin"
+      rm -f "$TMPDIR/keybox.sh"
+      ;;
+    *) error "$1" "stealkeybox <Basic arguments>" "-help";;
+  esac
 }
 
 staterefresh() {
-functions_cn TRUEDES="提升TrickyStore的使用体验,同时极致隐藏由解锁引导加载程序产生的相关检测点."
-functions_en TRUEDES="Enhances the TrickyStore experience, while providing extreme hiding of detection points introduced by bootloader unlocking."
-description_exit() { sed -i "s|^description=.*|description=[$ENVIRONMENT$SERVICESTATE] $TRUEDES|" "$TSEEMODDIR/module.prop" && exit; }
-[ -f "$TSEEMODDIR/disable" ] && {
-  functions_cn ENVIRONMENT="❌禁用."
-  functions_en ENVIRONMENT="❌Disabled."
-  description_exit
-}
-functions_cn SERVICESTATE=" 所有服务将不会启动!"
-functions_en SERVICESTATE=" All service will not start!"
-if [ ! -d "$TSMODDIR" ]; then
-  functions_cn ENVIRONMENT="❌TrickyStore模块未安装!"
-  functions_en ENVIRONMENT="❌TrickyStore module is not installed!"
-  description_exit
-elif [ -f "$TSMODDIR/disable" ]; then
-  functions_cn ENVIRONMENT="❌TrickyStore模块已禁用!"
-  functions_en ENVIRONMENT="❌TrickyStore module is disabled!"
-  description_exit
-elif [ "$ROOT" = "Multiple" ]; then
-  MULTIPLE=$(cat "$MULTIPLETYPE")
-  functions_cn ENVIRONMENT="❌Root#多重共存($MULTIPLE)"
-  functions_en ENVIRONMENT="❌Root#Multiple($MULTIPLE)"
-  description_exit
-fi
-[ -f "$KERNELTYPE" ] && KERNEL="(❎Kernel#"$(cat "$KERNELTYPE")")"
-if [ "$ROOT" = "NULL" ]; then
-  ENVIRONMENT="⚠️Root#Unknown(Unknown)."
-elif [ "$ROOT" = "APatch" ]; then
-  VERSION=$(apd -V | awk '{print $2}')
-  [ -f $ADB/.litemode_enable ] && LITE="Lite-"
-  ENVIRONMENT="✅Root#APatch($LITE$VERSION)$KERNEL."
-elif [ "$ROOT" = "Magisk" ]; then
-  VERSION=$(magisk -V)
-  ENVIRONMENT="✅Root#Magisk($VERSION)$KERNEL."
-else
-  VERSION=$(ksud debug version | awk '{print $3}')
-  if [ "$ROOT" = "KernelSU" ]; then
-    ENVIRONMENT="✅Root#KernelSU($VERSION)$KERNEL."
-  elif [ "$ROOT" = "SuckySU" ]; then
-    ENVIRONMENT="✅Root#SuckySU($VERSION)$KERNEL."
+  ROOT=$(cat "$TYPE")
+  functions_cn TRUEDES="提升TrickyStore的使用体验,同时极致隐藏由解锁引导加载程序产生的相关检测点."
+  functions_en TRUEDES="Enhances the TrickyStore experience, while providing extreme hiding of detection points introduced by bootloader unlocking."
+  description_exit() {
+    sed -i "s|^description=.*|description=[$ENVIRONMENT$SERVICESTATE] $TRUEDES|" "$TSEEMODDIR/module.prop" && exit
+  }
+  [ -f "$TSEEMODDIR/disable" ] && {
+    functions_cn ENVIRONMENT="❌禁用."
+    functions_en ENVIRONMENT="❌Disabled."
+    description_exit
+  }
+  functions_cn SERVICESTATE=" 所有服务将不会启动!"
+  functions_en SERVICESTATE=" All service will not start!"
+  if sed -n '5p' "$TSMODDIR/module.prop" | grep -q -F "Enginex0"; then
+    functions_cn ENVIRONMENT="❌TEESimulator模块为Enginex0的分支!"
+    functions_en ENVIRONMENT="❌TEESimulator module is a branch of Enginex0!"
+    description_exit
+  elif [ ! -d "$TSMODDIR" ]; then
+    functions_cn ENVIRONMENT="❌TrickyStore模块未安装!"
+    functions_en ENVIRONMENT="❌TrickyStore module is not installed!"
+    description_exit
+  elif [ -f "$TSMODDIR/disable" ]; then
+    functions_cn ENVIRONMENT="❌TrickyStore模块已禁用!"
+    functions_en ENVIRONMENT="❌TrickyStore module is disabled!"
+    description_exit
+  elif [ "$ROOT" = "Multiple" ]; then
+    MULTIPLE=$(cat "$MULTIPLETYPE")
+    functions_cn ENVIRONMENT="❌Root#多重共存($MULTIPLE)"
+    functions_en ENVIRONMENT="❌Root#Multiple($MULTIPLE)"
+    description_exit
   fi
-fi
-functions_cn PARAMETER="✅参数执行结束."
-functions_en PARAMETER="✅Parameters executed ends."
-if [ "$(tseectl -state)" = "true" ]; then
-  functions_cn SERVICESTATE=" ✅服务运行中! $PARAMETER"
-  functions_en SERVICESTATE=" ✅Service is working! $PARAMETER"
-else
-  functions_cn SERVICESTATE=" ❌服务无法启动! $PARAMETER"
-  functions_en SERVICESTATE=" ❌Service can't start! $PARAMETER"
-fi
-description_exit
+  [ -f "$KERNELTYPE" ] && KERNEL="(❎Kernel#"$(cat "$KERNELTYPE")")"
+  if [ "$ROOT" = "NULL" ]; then
+    ENVIRONMENT="⚠️Root#Unknown(Unknown)."
+  elif [ "$ROOT" = "APatch" ]; then
+    VERSION=$(apd -V | awk '{print $2}')
+    [ -f $ADB/.litemode_enable ] && LITE="Lite-"
+    ENVIRONMENT="✅Root#APatch($LITE$VERSION)$KERNEL."
+  elif [ "$ROOT" = "Magisk" ]; then
+    VERSION=$(magisk -V)
+    ENVIRONMENT="✅Root#Magisk($VERSION)$KERNEL."
+  else
+    VERSION=$(ksud debug version | awk '{print $3}')
+    if [ "$ROOT" = "KernelSU" ]; then
+      ENVIRONMENT="✅Root#KernelSU($VERSION)$KERNEL."
+    elif [ "$ROOT" = "SuckySU" ]; then
+      ENVIRONMENT="✅Root#SuckySU($VERSION)$KERNEL."
+    fi
+  fi
+  if [ "$(tseectl -state)" = "true" ]; then
+    functions_cn SERVICESTATE=" ✅服务启动成功."
+    functions_en SERVICESTATE=" ✅Service started successfully."
+  else
+    functions_cn SERVICESTATE=" ❌服务无法启动!"
+    functions_en SERVICESTATE=" ❌Service can't start!"
+  fi
+  description_exit
 }
 
 conflictmodcheck() {
-help() (
-echo "conflictmodcheck
+  help() (
+    echo "conflictmodcheck
 
 Usage: tseed conflictmodcheck <Basic arguments>
 
@@ -531,107 +619,109 @@ Arguments:
 
 Options:
   -h, -help"
-)
-functions_cn DES="此模块与TS-Enhancer-Extreme模块证实冲突,已被添加移除标签,将在"
-functions_cn WAY="下一次启动时被移除."
-functions_en DES="This module has been confirmed to conflict with the TS-Enhancer-Extreme module. It has been tagged for removal and will be removed "
-functions_en WAY="upon the next boot."
-conflictdes_all() ( sed -i "s|^description=.*|description=$DES$WAY|" "/data/adb/modules/$MODULE/module.prop"; )
-MODULESUPDATEDIR="$ADB/modules_update"
-CONFLICT="
-Yurikey
-xiaocaiye
-safetynet-fix
-vbmeta-fixer
-playintegrity
-integrity_box
-SukiSU_module
-Reset_BootHash
-Tricky_store-bm
-Hide_Bootloader
-ShamikoManager
-extreme_hide_root
-Tricky_Store-xiaoyi
-tricky_store_assistant
-extreme_hide_bootloader
-wjw_hiderootauxiliarymod
-"
-RMRFCONFLICT="
-TA_utl
-.TA_utl
-Yamabukiko
-"
-case "$1" in
-  -h|-help)
-    help
-    ;;
-  -servicemode)
-    sleep 2s
-    for MODULE in $CONFLICT; do
-      [ -d "$MODULESDIR/$MODULE" ] && {
-        conflictdes_all
-        touch "$MODULESDIR/$MODULE/disable"
-        touch "$MODULESDIR/$MODULE/remove"
-        rm -rf "$MODULESUPDATEDIR/$MODULE"
-      }
-    done
-    for RMRFMODULE in $RMRFCONFLICT; do
-      [ -d "$MODULESDIR/$RMRFMODULE" ] && {
-        (cd "$MODULESDIR/$RMRFMODULE"; ./uninstall.sh)
-        rm -rf "$MODULESDIR/$RMRFMODULE"
-      }
-    done
-    ;;
-esac
-for MODULE in $CONFLICT; do
-  [ -d "$MODULESDIR/$MODULE" ] && {
-    conflictdes_all
-    touch "$MODULESDIR/$MODULE/update"
-    touch "$MODULESDIR/$MODULE/disable"
-    touch "$MODULESDIR/$MODULE/remove"
-    rm -f "$MODULESUPDATEDIR/uninstall.sh"
-    rm -f "$MODULESDIR/$MODULE/uninstall.sh"
-  }
-done
-for RMRFMODULE in $RMRFCONFLICT; do
-  [ -d "$MODULESDIR/$RMRFMODULE" ] && {
-    (cd "$MODULESDIR/$RMRFMODULE"; ./uninstall.sh)
-    rm -rf "$MODULESDIR/$RMRFMODULE"
-  }
-done
+  )
+  functions_cn DES="此模块与TS-Enhancer-Extreme模块证实冲突,已被添加移除标签,将在"
+  functions_cn WAY="下一次启动时被移除."
+  functions_en DES="This module has been confirmed to conflict with the TS-Enhancer-Extreme module. It has been tagged for removal and will be removed "
+  functions_en WAY="upon the next boot."
+  conflictdes_all() (
+    sed -i "s|^description=.*|description=$DES$WAY|" "/data/adb/modules/$MODULE/module.prop"
+  )
+  MODULESUPDATEDIR="$ADB/modules_update"
+  CONFLICT="
+  Yurikey
+  xiaocaiye
+  safetynet-fix
+  vbmeta-fixer
+  playintegrity
+  integrity_box
+  SukiSU_module
+  Reset_BootHash
+  Tricky_store-bm
+  Hide_Bootloader
+  ShamikoManager
+  extreme_hide_root
+  Tricky_Store-xiaoyi
+  tricky_store_assistant
+  extreme_hide_bootloader
+  wjw_hiderootauxiliarymod
+  "
+  RMRFCONFLICT="
+  TA_utl
+  .TA_utl
+  Yamabukiko
+  "
+  case "$1" in
+    -h|-help)
+      help
+      ;;
+    -servicemode)
+      sleep 2s
+      for MODULE in $CONFLICT; do
+        [ -d "$MODULESDIR/$MODULE" ] && {
+          conflictdes_all
+          touch "$MODULESDIR/$MODULE/disable"
+          touch "$MODULESDIR/$MODULE/remove"
+          rm -rf "$MODULESUPDATEDIR/$MODULE"
+        }
+      done
+      for RMRFMODULE in $RMRFCONFLICT; do
+        [ -d "$MODULESDIR/$RMRFMODULE" ] && {
+          (cd "$MODULESDIR/$RMRFMODULE"; ./uninstall.sh)
+          rm -rf "$MODULESDIR/$RMRFMODULE"
+        }
+      done
+      ;;
+  esac
+  for MODULE in $CONFLICT; do
+    [ -d "$MODULESDIR/$MODULE" ] && {
+      conflictdes_all
+      touch "$MODULESDIR/$MODULE/update"
+      touch "$MODULESDIR/$MODULE/disable"
+      touch "$MODULESDIR/$MODULE/remove"
+      rm -f "$MODULESUPDATEDIR/uninstall.sh"
+      rm -f "$MODULESDIR/$MODULE/uninstall.sh"
+    }
+  done
+  for RMRFMODULE in $RMRFCONFLICT; do
+    [ -d "$MODULESDIR/$RMRFMODULE" ] && {
+      (cd "$MODULESDIR/$RMRFMODULE"; ./uninstall.sh)
+      rm -rf "$MODULESDIR/$RMRFMODULE"
+    }
+  done
 }
 
 securitypatchpropsync() {
-SP="$TSCONFIG/security_patch.txt"
-[ ! -f "$SP" ] && logce "文件不存在" && exit 1
-RAW="$(grep -oE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' "$SP")"
-if [ -n "$RAW" ]; then
-  DATE="$RAW"
-else
-  RAW="$(grep -oE '^[0-9]{8}$' "$SP")"
-  [ -n "$RAW" ] && DATE="${RAW:0:4}-${RAW:4:2}-${RAW:6:2}"
-fi
-if [ -n "$DATE" ]; then
-  resetprop ro.vendor.build.security_patch "$DATE"
-  resetprop ro.build.version.security_patch "$DATE"
-  kill -9 "$(pidof com.google.android.gms.unstable)" 2>/dev/null
-  logce "同步完毕"
-else
-  logce "格式错误"
-  exit 1
-fi
+  SP="$TSCONFIG/security_patch.txt"
+  [ ! -f "$SP" ] && logcee "文件不存在" && exit 1
+  RAW="$(grep -oE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' "$SP")"
+  if [ -n "$RAW" ]; then
+    DATE="$RAW"
+  else
+    RAW="$(grep -oE '^[0-9]{8}$' "$SP")"
+    [ -n "$RAW" ] && DATE="${RAW:0:4}-${RAW:4:2}-${RAW:6:2}"
+  fi
+  if [ -n "$DATE" ]; then
+    resetprop ro.vendor.build.security_patch "$DATE"
+    resetprop ro.build.version.security_patch "$DATE"
+    kill -9 "$(pidof com.google.android.gms.unstable)" 2>/dev/null
+    logcei "同步完毕"
+  else
+    logcee "格式错误"
+    exit 1
+  fi
 }
 
 securitypatchdatefetch() {
-DATE="$(crawl "https://source.android.com/docs/security/bulletin/pixel" | sed -n 's/.*<td>\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)<\/td>.*/\1/p' | head -n 1)"
-if [ -n "$DATE" ]; then
-  logce "拉取成功"
-  DATE=${DATE//-/}
-  printf "%s" "$DATE" > "$TSCONFIG/security_patch.txt"
-elif ! ping -c 1 -W 5 "source.android.com" >/dev/null 2>&1; then
-  logce "拉取失败"
-  exit 1
-fi
+  DATE="$(crawl "https://source.android.com/docs/security/bulletin/pixel" | sed -n 's/.*<td>\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)<\/td>.*/\1/p' | head -n 1)"
+  if [ -n "$DATE" ]; then
+    logcei "拉取成功"
+    DATE=${DATE//-/}
+    printf "%s" "$DATE" > "$TSCONFIG/security_patch.txt"
+  elif ! ping -c 1 -W 5 "source.android.com" >/dev/null 2>&1; then
+    logcee "拉取失败"
+    exit 1
+  fi
 }
 
 case "$1:$2" in
@@ -641,7 +731,10 @@ case "$1:$2" in
   "--tseectl:"*) tseectl "$2"; exit ;;
   "--tsctl:"*) tsctl "$2"; exit ;;
 esac
-version() { echo "tseed 1.0.0" ; exit; }
+version() {
+  echo "tseed 1.0.0"
+  exit
+}
 for ARG in "$@"; do
   case "$ARG" in
     -h|--help) help; exit ;;

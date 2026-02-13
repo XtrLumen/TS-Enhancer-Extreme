@@ -36,41 +36,31 @@ KERNELTYPE="$TSEECONFIG/kernel.txt"
 TSEELOG="$TSEECONFIG/log/log.log"
 TSEEBIN="$TSEEMODDIR/bin"
 TYPE="$TSEECONFIG/root.txt"
-#OTHERS#
+#OTHER#
 ORIGIN=$(basename "$0")
 ##END##
 
 ##FUNCTIONS##
 #MULTILINGUAL#
 [[ "$(getprop persist.sys.locale)" == *"zh"* || "$(getprop ro.product.locale)" == *"zh"* ]] && LOCALE="CN" || LOCALE="EN"
-operate() {
+println() {
   [ "$LOCALE" = "$1" ] && {
     shift
-    local operation="$1"
-    shift
-    case "$operation" in
-      echo)
-        if [ "$1" = "-n" ]; then
-          shift
-          echo -n "$@"
-        else
-          echo "$@"
-        fi
-        ;;
-      functions)
-        eval "${1%=*}=\"${1#*=}\""
-        ;;
-    esac
+    if [ "$1" = "-n" ]; then
+      shift
+      echo -n "$@"
+    else
+      echo "$@"
+    fi
   }
 }
-echo_cn() { operate "CN" "echo" "$@"; }
-echo_en() { operate "EN" "echo" "$@"; }
+echo_cn() { println "CN" "$@"; }
+echo_en() { println "EN" "$@"; }
 #OTHER#
-logout() { echo "$(date "+%m-%d %H:%M:%S.$(date +%3N)")  $$  $$ I System.out: [TSEE]$1" >> "$TSEELOG"; }
-logc() { logout "<CLI>$1"; }
-logs() { logout "<Service>$1"; }
-logd() { logout "<Service.D>$1"; }
-logp() { logout "<Post-Fs-Data>$1"; }
+logout() { echo "$(date "+%m-%d %H:%M:%S.$(date +%3N)")  $$  $$ $1 System.out: [TSEE]$2" >> "$TSEELOG"; }
+logs() { logout "$1" "<Service>$2"; }
+logd() { logout "$1" "<Service.D>$2"; }
+logp() { logout "$1" "<Post-Fs-Data>$2"; }
 invoke() {
   case "$ORIGIN" in
     *"$S"*)
@@ -83,18 +73,18 @@ invoke() {
       class="logd"
       ;;
   esac
-  "$class" "$1"
+  "$class" "I" "$1"
   if $TSEEBIN/tseed $2; then
-    "$class" "完毕"
+    "$class" "I" "完毕"
   else
-    "$class" "失败"
+    "$class" "W" "失败"
   fi
 }
 check() {
-  if [ "$(cat "$TYPE")" = "Multiple" ] || [ ! -d "$TSMODDIR" ] || [ -f "$TSMODDIR/disable" ]; then
+  if [ "$(cat "$TYPE")" = "Multiple" ] || [ ! -d "$TSMODDIR" ] || [ -f "$TSMODDIR/disable" ] || sed -n '5p' "$TSMODDIR/module.prop" | grep -q -F "Enginex0"; then
     case "$ORIGIN" in
       *"$P"*)
-        logp "环境异常,拦截执行"
+        logp "E" "环境异常,拦截执行"
         rm -f "$TSMODDIR/action.sh"
         mv "$TSEEMODDIR/webroot" "$TSEEMODDIR/.webroot"
         mv "$TSEEMODDIR/action.sh" "$TSEEMODDIR/.action.sh"
@@ -105,7 +95,7 @@ check() {
     esac
   else
     [[ "$ORIGIN" == *"$P"* ]] && {
-      logp "环境正常,继续执行"
+      logp "I" "环境正常,继续执行"
       mv "$TSEEMODDIR/.webroot" "$TSEEMODDIR/webroot"
       ln -sf "$TSEEMODDIR/lib/action.sh" "$TSMODDIR/action.sh"
       if [[ ! "$APATCH" && ! "$KSU" ]]; then
@@ -132,11 +122,9 @@ initwait() {
 }
 ##END##
 
-if [[ "$ORIGIN" == *"$P"* ]]; then
+[[ "$ORIGIN" == *"$P"* ]] && {
   rm -f "$MULTIPLETYPE"
   rm -f "$KERNELTYPE"
   rm -f "$TSEELOG"
   rm -f "$TYPE"
-else
-  ROOT=$(cat "$TYPE")
-fi
+}

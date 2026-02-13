@@ -18,10 +18,10 @@ cd ${0%/*}
 source "./lib/util_functions.sh"
 check
 
-logs "启动后台服务"
+logs "I" "启动后台服务"
 $TSEEBIN/tseed --tseectl -start
 initwait
-[[ $($TSEEBIN/tseed --tseectl -state) == "true" ]] || logs "服务启动失败"
+[[ $($TSEEBIN/tseed --tseectl -state) == "true" ]] || logs "E" "服务启动失败"
 invoke "更新目标文件" "--packagelistupdate"
 invoke "卸载冲突软件" "--conflictappcheck"
 invoke "同步安全补丁级别到属性" "--securitypatchpropsync"
