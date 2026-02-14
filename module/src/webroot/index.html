@@ -1,7 +1,135 @@
-<!DOCTYPE html><html lang=zh-CN><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>TSEE</title><script src=https://cdn.tailwindcss.com></script><script type=module src=/zram-webui.2deaef2d.js></script><body class="bg-gray-50 font-sans min-h-screen p-6">
-        <div class="bg-white p-8 rounded-2xl shadow-xl text-gray-600 text-sm">
-            <p class=mb-3>海内存知己，天涯若比邻。</p>
-            <p class=mb-3>一切即将准备就绪</p>
-            <p class=mb-3>感谢你的耐心等待</p>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#006495">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="AMMF WebUI - 模块管理界面">
+    <meta name="color-scheme" content="light dark">
+    <title>AMMF WebUI</title>
+    
+    <!-- Material Design 图标 -->
+    <link rel="stylesheet" href="css/css2.css">
+    <!-- 预加载样式 -->
+    <style>
+        .app-header, #main-content {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        .app-loaded .app-header, .app-loaded #main-content {
+            opacity: 1;
+        }
+
+        html, body {
+            overscroll-behavior: none;
+            background-color: var(--md-background);
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            height: 100%;
+            position: relative;
+        }
+    
+        html::-webkit-scrollbar, body::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+        
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #007bff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <!-- 主题脚本 -->
+    <script src="theme.js"></script>
+    
+    <!-- CSS加载器 -->
+    <script src="css-loader.js"></script>
+    
+    <!-- SVG图标系统 -->
+    <script src="svg/icons.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- 头部 -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1 id="page-title">AMMF WebUI</h1>
+                </div>
+                <div class="header-actions">
+                    <div id="page-actions" class="page-actions"></div>
+                    <button id="language-button" class="icon-button" title="语言">
+                        <span class="material-symbols-rounded">translate</span>
+                    </button>
+                    <button id="theme-toggle" class="icon-button" title="主题">
+                        <span class="material-symbols-rounded">light_mode</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 主内容区域 -->
+        <main id="main-content">
+            <div class="loading-container">
+                <div class="spinner"></div>
+                <p data-i18n="LOADING">加载中...</p>
+            </div>
+        </main>
+        
+        <!-- 动态生成底栏导航 -->
+        <nav id="app-nav" class="app-nav"></nav>
+        
+        <!-- 语言选择器 -->
+        <div id="language-selector" class="language-selector">
+            <div class="language-selector-content">
+                <div class="language-selector-header">
+                    <h3 data-i18n="SELECT_LANGUAGE">选择语言</h3>
+                </div>
+                <div id="language-options" class="language-options"></div>
+                <div class="language-selector-footer">
+                    <button id="cancel-language" class="icon-button" data-i18n="CANCEL">取消</button>
+                </div>
+            </div>
         </div>
+        
+        <!-- 吐司提示容器 -->
+        <div id="toast-container" class="toast-container"></div>
     </div>
+    
+    <!-- 核心 脚本 -->
+    <script src="core.js"></script>
+    <script src="theme.js"></script>
+    <script src="i18n.js"></script>
+    
+    <!-- MMRL API -->
+    <script>
+        if (window.MMRL) {
+            const mmrlScript = document.createElement('script');
+            mmrlScript.src = 'mmrl.js';
+            document.head.appendChild(mmrlScript);
+        }
+    </script>
+    
+    <!-- 主应用脚本 -->
+    <script src="app.js"></script>
+</body>
+</html>

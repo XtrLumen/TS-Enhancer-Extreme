@@ -1,0 +1,573 @@
+/**
+ * AMMF WebUI 动画样式
+ * 包含所有界面动画和过渡效果
+ */
+/* 加载动画 */
+/* 页面过渡动画 */
+@keyframes pageFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes pageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.page-container.fade-out {
+  animation: pageFadeOut 200ms ease-out forwards;
+}
+
+.page-container.slide-in {
+  animation: pageSlideIn 300ms ease-out forwards;
+}
+/* 应用于标题和操作按钮容器 */
+.header-title.fade-out,
+.page-actions.fade-out {
+  animation: fadeOut 150ms ease-out forwards;
+}
+
+.header-title.fade-in,
+.page-actions.fade-in {
+  animation: fadeIn 200ms ease-out forwards;
+}
+/* 标题和操作按钮动画 */
+@keyframes headerFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+        visibility: visible;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-10px);
+        visibility: hidden;
+    }
+}
+
+@keyframes headerFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+        visibility: visible;
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        visibility: visible;
+    }
+}
+
+.header-title.fade-out,
+.page-actions.fade-out {
+    animation: headerFadeOut 200ms ease-out forwards;
+    will-change: transform, opacity, visibility;
+}
+
+.header-title.fade-in,
+.page-actions.fade-in {
+    animation: headerFadeIn 250ms ease-out forwards;
+    will-change: transform, opacity, visibility;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid color-mix(in oklch, var(--on-surface) 10%, transparent);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: spin 1s ease-in-out infinite;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+/* Toast 动画效果 (Portrait) */
+@keyframes toastSlideInPortrait {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastSlideOutPortrait {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.9);
+  }
+}
+
+/* Toast 动画效果 (Landscape) */
+@keyframes toastSlideInLandscape {
+  from {
+    opacity: 0;
+    transform: translateX(24px) scale(0.98); /* Slide in from right */
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toastSlideOutLandscape {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(24px) scale(0.98); /* Slide out to right */
+  }
+}
+
+/* Toast 动画应用 */
+.toast.show {
+  animation: toastSlideInPortrait 250ms cubic-bezier(0.3, 0, 0.2, 0.15) forwards;
+}
+
+.toast.hide {
+  animation: toastSlideOutPortrait 150ms cubic-bezier(0.3, 0, 0.8, 0.65) forwards;
+}
+
+/* Apply landscape animations in landscape orientation */
+@media (orientation: landscape) {
+    .toast.show {
+        animation: toastSlideInLandscape 250ms cubic-bezier(0.3, 0, 0.8, 0.15) forwards;
+    }
+
+    .toast.hide {
+        animation: toastSlideOutLandscape 150ms cubic-bezier(0.3, 0, 0.8, 0.15) forwards;
+    }
+}
+
+
+/* 语言选择器动画 */
+@keyframes languageSelectorFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* 语言选择器动画 */
+@keyframes languageSelectorFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes languageSelectorFadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* 语言选择器动画应用 */
+.language-selector.active {
+  animation: languageSelectorFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.language-selector.closing {
+  animation: languageSelectorFadeOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.log-delete-dialog {
+  opacity: 0;
+  animation: fadeIn 180ms ease-out forwards;
+}
+
+.log-delete-dialog.closing {
+  animation: fadeOut 120ms ease-out forwards;
+}
+
+/* 开关切换动画 */
+@keyframes switchTrackOn {
+  from {
+    background-color: var(--surface-container-highest);
+    border-color: var(--outline);
+  }
+
+  to {
+    background-color: var(--primary);
+    border-color: var(--primary);
+  }
+}
+
+@keyframes switchTrackOff {
+  from {
+    background-color: var(--primary);
+    border-color: var(--primary);
+  }
+
+  to {
+    background-color: var(--surface-container-highest);
+    border-color: var(--outline);
+  }
+}
+
+@keyframes switchHandleOn {
+  0% {
+    transform: translateX(-50%);
+    background-color: var(--outline);
+  }
+
+  50% {
+    transform: translateX(0%);
+    width: 24px;
+    height: 24px;
+  }
+
+  100% {
+    transform: translateX(50%);
+    background-color: var(--on-primary);
+  }
+}
+
+@keyframes switchHandleOff {
+  0% {
+    transform: translateX(50%);
+    background-color: var(--on-primary);
+  }
+
+  50% {
+    transform: translateX(0%);
+    width: 24px;
+    height: 24px;
+  }
+
+  100% {
+    transform: translateX(-50%);
+    background-color: var(--outline);
+  }
+}
+
+/* 单选按钮和复选框动画 */
+@keyframes checkboxOn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes radioOn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 修改后的涟漪效果类 */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background-color: color-mix(in oklch, currentColor 12%, transparent);
+  transform: scale(0);
+  pointer-events: none;
+  animation: rippleEffect 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* 新的涟漪动画 */
+@keyframes rippleEffect {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes navSlideOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(100%);
+    opacity: 0.8;
+  }
+}
+
+@keyframes navSlideIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0.8;
+  }
+
+  to {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+@keyframes navPaddingExpand {
+  from {
+      padding: 3px 8px;
+  }
+  to {
+      padding: 3px 18px;
+  }
+}
+
+/* 在导航项激活状态应用动画 */
+.nav-item.active .material-symbols-rounded {
+  animation: navPaddingExpand 200ms cubic-bezier(0.2, 0, 0.2, 1) forwards;
+}
+.app-nav.hidden {
+  animation: navSlideOut 400ms cubic-bezier(0.68, 0, 0.27, 1.55) forwards;
+}
+
+.app-nav.visible {
+  animation: navSlideIn 200ms cubic-bezier(0.68, 0, 0.27, 0)  forwards;
+}
+
+/* 导航项文字动画 */
+@keyframes navTextSlideIn {
+  from {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    max-height: 20px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes navTextSlideOut {
+  from {
+    max-height: 20px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* 导航项激活状态动画 */
+.nav-item.active span:not(.material-symbols-rounded) {
+  animation: navTextSlideIn 0.3s ease-out forwards;
+  display: block;
+  /* 确保文字始终占据空间 */
+}
+
+.nav-item:not(.active) span:not(.material-symbols-rounded) {
+  animation: navTextSlideOut 0.3s ease-out forwards;
+  display: block;
+  /* 确保文字始终占据空间 */
+}
+
+/* 颜色选择器动画 */
+@keyframes colorPickerFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes colorPickerFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* 颜色选择器遮罩层动画 */
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes overlayFadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.color-picker-overlay {
+  animation: overlayFadeIn 0.2s ease-out forwards;
+}
+
+.color-picker-overlay.closing {
+  animation: overlayFadeOut 0.2s ease-out forwards;
+}
+
+.color-picker-dialog {
+  animation: colorPickerFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.color-picker-dialog.closing {
+  animation: colorPickerFadeOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* 关闭动画 */
+.log-delete-dialog.closing {
+  animation: fadeOut 0.12s ease-out;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* 通用弹出动画 */
+@keyframes dialogFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes dialogFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes overlayFadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* 语言选择器动画 */
+.language-selector {
+  animation: overlayFadeIn 0.2s ease-out forwards;
+}
+
+.language-selector.closing {
+  animation: overlayFadeOut 0.2s ease-out forwards;
+}
+
+.language-selector-content {
+  animation: dialogFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.language-selector-content.closing {
+  animation: dialogFadeOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* 日志删除对话框动画 */
+.md-dialog {
+  animation: dialogFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.md-dialog.closing {
+  animation: dialogFadeOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}

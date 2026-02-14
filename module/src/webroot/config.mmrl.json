@@ -1,0 +1,7 @@
+{
+    "permissions": [
+        "webui.permission.PLUGIN_DEX_LOADER",
+        "webui.permission.ERUDA",
+        "webui.permission.FILESYSTEM"
+    ]
+}

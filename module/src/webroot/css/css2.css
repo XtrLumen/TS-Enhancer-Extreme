@@ -1,0 +1,16 @@
+/* SVG Icons */
+.material-symbols-rounded {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 1;
+  vertical-align: middle;
+  fill: currentColor;
+  stroke: none;
+}
+
+.material-symbols-rounded svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}

@@ -1,0 +1,38 @@
+
+{
+  "pages": [
+    {
+      "id": "status",
+      "name": "首页",
+      "icon": "home",
+      "module": "StatusPage",
+      "file": "pages/status.js",
+      "i18n_key": "NAV_STATUS"
+    },
+    {
+      "id": "settings",
+      "name": "应用",
+      "icon": "admin_panel_settings",
+      "module": "SettingsPage",
+      "file": "pages/settings.js",
+      "i18n_key": "NAV_APPS"
+    },
+    {
+      "id": "tools",
+      "name": "功能",
+      "icon": "layers",
+      "module": "ToolsPage",
+      "file": "pages/tools.js",
+      "i18n_key": "NAV_TOOLS"
+    },
+    {
+      "id": "about",
+      "name": "设置",
+      "icon": "settings",
+      "module": "AboutPage",
+      "file": "pages/about.js",
+      "i18n_key": "NAV_SETTINGS"
+    }
+  ],
+  "defaultPage": "status"
+} 

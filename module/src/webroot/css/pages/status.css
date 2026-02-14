@@ -1,0 +1,397 @@
+/**
+ * TSEE WebUI 主页页面样式
+ * 基于 Material Design 3 设计系统
+ */
+
+.status-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-l);
+}
+
+.quick-actions-container {
+    display: flex;
+    gap: var(--spacing-m);
+    padding: var(--spacing-m) var(--spacing-l);
+    border-top: 1px solid var(--outline-variant);
+    border-bottom: 1px solid var(--outline-variant);
+    background-color: var(--surface-container-high);
+}
+
+.quick-action {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s);
+    padding: var(--spacing-s) var(--spacing-m);
+    border-radius: var(--border-radius-l);
+    background-color: var(--surface-container-high);
+    cursor: pointer;
+    transition: all var(--tra);
+}
+
+.quick-action:hover {
+    background-color: color-mix(in oklch, var(--primary) 8%, transparent);
+}
+
+.quick-action .material-symbols-rounded {
+    font-size: 24px;
+    color: var(--primary);
+}
+
+.action-output-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    z-index: 1000;
+    background-color: var(--surface-container-high);
+    border-radius: 28px;
+    overflow: hidden;
+}
+
+.action-output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-m) var(--spacing-l);
+    background-color: var(--surface-container-highest);
+    border-bottom: 1px solid var(--outline-variant);
+}
+
+.action-output-header h3 {
+    margin: 0;
+    font: var(--title-m);
+    color: var(--on-surface);
+}
+
+.action-output-content {
+    padding: var(--spacing-l);
+    max-height: calc(80vh - 60px);
+    overflow-y: auto;
+    font-family: var(--font-mono);
+    white-space: pre-wrap;
+    font: var(--body-m);
+    line-height: 1.5;
+    color: var(--on-surface);
+    background-color: var(--surface-container);
+}
+
+.action-output-content .error {
+    color: var(--error);
+}
+
+.update-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-l) var(--spacing-xl);
+    border-radius: var(--border-radius-l);
+    margin-bottom: var(--spacing-l);
+    border: 1px solid var(--outline-variant);
+    transition: all var(--tra);
+}
+
+.update-banner.available {
+    background-color: var(--primary-container);
+    border-color: var(--primary);
+    color: var(--on-primary-container);
+}
+
+.update-banner.checking {
+    background-color: var(--secondary-container);
+    border-color: var(--secondary);
+    color: var(--on-secondary-container);
+}
+
+.update-banner.error {
+    background-color: var(--error-container);
+    border-color: var(--error);
+    color: var(--on-error-container);
+}
+
+.update-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-l);
+    flex: 1;
+}
+
+.update-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius-s);
+    background-color: color-mix(in oklch, currentColor 12%, transparent);
+}
+
+.update-icon .material-symbols-rounded {
+    font-size: 24px;
+    color: currentColor;
+}
+
+.update-icon .rotating {
+    animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.update-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    flex: 1;
+}
+
+.update-title {
+    font: var(--title-m);
+    font-weight: 600;
+    color: currentColor;
+    line-height: 1.2;
+}
+
+.update-subtitle {
+    font: var(--body-s);
+    color: color-mix(in oklch, currentColor 80%, transparent);
+    line-height: 1.3;
+}
+
+.update-version {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-m);
+    margin-top: var(--spacing-xs);
+}
+
+.version-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-s);
+    background-color: color-mix(in oklch, currentColor 16%, transparent);
+    border-radius: 8px;
+    font: var(--label-m);
+    font-weight: 600;
+    color: currentColor;
+    font-family: var(--font-mono);
+}
+
+.version-date {
+    font: var(--body-s);
+    color: color-mix(in oklch, currentColor 70%, transparent);
+    font-weight: 500;
+}
+
+.update-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-s);
+    padding: var(--spacing-l) var(--spacing-xl);
+    height: 40px;
+    border-radius: var(--border-radius-xl);
+    background-color: var(--primary);
+    color: var(--on-primary);
+    text-decoration: none;
+    font: var(--label-l);
+    border: none;
+    cursor: pointer;
+    min-width: 120px;
+    justify-content: center;
+    box-shadow: var(--elevation-1);
+    transition: all var(--tra);
+}
+.update-button:hover {
+    background-color: color-mix(in oklch, var(--primary) 92%, black);
+    box-shadow: var(--elevation-2);
+    transform: translateY(-1px);
+}
+
+.update-button:active {
+    background-color: color-mix(in oklch, var(--primary) 88%, black);
+    box-shadow: var(--elevation-1);
+    transform: translateY(0);
+}
+
+.update-button .material-symbols-rounded {
+    font-size: 18px;
+}
+
+@media (max-width: 768px) {
+    .update-banner {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-l);
+        padding: var(--spacing-l);
+    }
+    
+    .update-info {
+        justify-content: flex-start;
+    }
+    
+    .update-button {
+        align-self: flex-end;
+        min-width: 100px;
+    }
+    
+    .update-version {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+}
+
+.status-card {
+    background-color: var(--surface-container-low);
+    border-radius: var(--border-radius-l);
+    overflow: hidden;
+    margin-bottom: var(--spacing-xl);
+}
+
+.status-card-content {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-xl);
+    gap: var(--spacing-l);
+}
+
+.status-icon-container {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xs);
+}
+
+.status-indicator {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-l);
+}
+
+.status-info-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.status-title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-m);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.status-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.status-detail-row {
+    font: var(--body-m);
+}
+
+.module-status-card.status-running,
+.module-status-card.status-normal-exit {
+    background-color: var(--primary-container);
+    color: var(--on-primary-container);
+}
+
+.module-status-card.status-stopped,
+.module-status-card.status-error {
+    background-color: var(--error-container);
+    color: var(--on-error-container);
+}
+
+.module-status-card.status-paused {
+    background-color: var(--secondary-container);
+    color: var(--on-secondary-container);
+}
+
+.module-status-card.status-unknown {
+    background-color: var(--surface-variant);
+    color: var(--on-surface-variant);
+}
+
+.module-status-card.status-unknown .status-indicator {
+    background-color: var(--outline);
+    color: var(--on-surface-variant);
+}
+
+.device-info-card {
+    background-color: var(--surface-container-low);
+}
+
+.device-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-l);
+    padding: var(--spacing-l);
+    background-color: var(--surface-container-highest);
+}
+
+.device-info-item {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-s);
+    border-radius: var(--border-radius-s);
+}
+
+.device-info-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: var(--spacing-m);
+}
+
+.device-info-icon .material-symbols-rounded {
+    font-size: 24px;
+    color: var(--primary);
+}
+
+.device-info-content {
+    flex: 1;
+}
+
+.device-info-label {
+    font: var(--label-l);
+    font-weight: 600;
+    color: var(--on-surface);
+    margin-bottom: var(--spacing-xs);
+}
+
+.device-info-value {
+    font: var(--body-m);
+    color: var(--on-surface-variant);
+}
+
+.no-info {
+    padding: var(--spacing-l);
+    text-align: center;
+    color: var(--on-surface-variant);
+    font: var(--body-m);
+}
+
+@media (min-width: 768px) {
+    .status-page {
+        padding: var(--spacing-xl);
+    }
+
+    .device-info-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+}

@@ -1,0 +1,408 @@
+/**
+ * AMMF WebUI 组件样式
+ * 基于MD3设计系统规范优化
+ */
+
+/* 使用style.css中定义的间距变量 */
+
+/* ===== 错误容器 ===== */
+.error-container {
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-l);
+    background-color: var(--error-container);
+    color: var(--on-error-container);
+    margin: var(--spacing-l) 0;
+}
+
+.error-container h2 {
+    margin-top: 0;
+    font: var(--headline-s);
+}
+
+/* ===== 加载动画容器 ===== */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--background);
+    z-index: 5;
+    transition: opacity var(--tra);
+}
+
+/* ===== 语言选择器 ===== */
+.language-selector {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: oklch(0 0 0 / .4);
+    z-index: 1000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.language-selector.active {
+    display: flex;
+}
+
+.language-selector-content {
+    background-color: var(--surface-container);
+    border-radius: calc(var(--border-radius-xl) + 4px);
+    width: min(90%, 560px);
+    max-height: 80vh;
+    overflow: hidden;
+    margin: var(--spacing-xl);
+}
+
+.language-selector-header {
+    padding: var(--spacing-xl);
+}
+
+.language-selector-header h3 {
+    margin: 0;
+    font: var(--headline-s);
+    color: var(--on-surface);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.language-options {
+    padding: var(--spacing-s) 0;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.language-option {
+    padding: var(--spacing-l) var(--spacing-xl);
+    cursor: pointer;
+    transition: background-color var(--tra);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-m);
+    min-height: 12px;
+}
+
+.language-option:hover {
+    background-color: color-mix(in oklch, var(--primary) 8%, transparent);
+}
+
+.language-option.selected {
+    color: var(--primary);
+    background-color: var(--primary-container);
+}
+
+.language-selector-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: var(--spacing-l) var(--spacing-xl);
+    border-top: 1px solid var(--outline-variant);
+}
+
+#cancel-language {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font: var(--label-l);
+    padding: 10px var(--spacing-xl);
+    border-radius: var(--border-radius-xl);
+    background-color: var(--primary);
+    color: var(--on-primary);
+    border: none;
+    cursor: pointer;
+    transition: background-color var(--tra);
+    min-width: 90px;
+}
+
+#cancel-language:hover {
+    background-color: var(--on-primary-container);
+}
+
+/* ===== 单选按钮 ===== */
+.md-radio {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--outline);
+    border-radius: 50%;
+    margin: 0 var(--spacing-m) 0 0;
+    position: relative;
+    transition: border-color var(--tra), background-color var(--tra);
+}
+
+.md-radio:checked {
+    border-color: var(--primary);
+    background-color: transparent;
+    border-width: 2px;
+}
+
+.md-radio:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 11px;
+    height: 11px;
+    background-color: var(--primary);
+    border-radius: 50%;
+}
+
+.md-radio:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.md-radio:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--primary-container);
+}
+
+/* ===== 弹出菜单 ===== */
+.md-popover {
+    border-radius: var(--border-radius-l);
+    background-color: var(--surface-container);
+    width: 280px;
+    max-width: 90vw;
+    overflow: hidden;
+}
+
+.popover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-l);
+    border-bottom: 1px solid var(--outline-variant);
+}
+
+.popover-header h3 {
+    margin: 0;
+    font: var(--headline-s);
+    color: var(--on-surface);
+}
+
+/* ===== Toast通知 ===== */
+#toast-container {
+    position: fixed;
+    bottom: 100px; /* Default position for portrait */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s);
+    pointer-events: none;
+    max-width: 90vw;
+    width: 100%;
+}
+
+/* Landscape orientation positioning */
+@media (orientation: landscape) {
+    #toast-container {
+        bottom: auto;
+        top: 32px;
+        right: 24px;
+        left: auto;
+        transform: none;
+        align-items: flex-end;
+        max-width: 400px;
+        width: auto;
+    }
+}
+
+.toast {
+    padding: var(--spacing-m) var(--spacing-l);
+    border-radius: var(--border-radius-l);
+    background-color: var(--surface-container-high);
+    color: var(--on-surface);
+    font: var(--body-m);
+    box-shadow: none;
+    opacity: 0;
+    transform: none;
+    transition: none;
+    pointer-events: auto;
+    max-width: none;
+    min-width: 180px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-m);
+    text-align: left;
+    overflow: hidden;
+    position: relative;
+    border-left: none;
+    line-height: 20px;
+}
+@media (orientation: landscape) {
+    .toast {
+        margin: 0;
+    }
+}
+.toast::before {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    background-color: currentColor;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+.toast-info {
+    color: var(--primary);
+}
+
+.toast-info::before {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
+}
+
+.toast-success {
+    color: var(--tertiary);
+}
+
+.toast-success::before {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
+}
+
+.toast-warning {
+    color: var(--secondary);
+}
+
+.toast-warning::before {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
+}
+
+.toast-error {
+    color: var(--error);
+}
+
+.toast-error::before {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
+}
+
+/**
+   * AMMF WebUI 通用组件样式
+   * 基于 Material Design 3 设计系统
+   */
+
+/* 空状态 */
+.empty-state {
+    padding: var(--spacing-l);
+    text-align: center;
+    color: var(--on-surface-variant);
+    font: var(--body-m);
+}
+
+/* 加载状态 */
+.loading-overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--surface-container-high);
+    z-index: 10;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity var(--tra), visibility var(--tra);
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid color-mix(in oklch, var(--on-surface) 10%, transparent);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 1s ease-in-out infinite;
+}
+
+/* 对话框样式 */
+.md-dialog {
+    background-color: var(--surface-container-high);
+    border-radius: 28px;
+    border: none;
+    padding: var(--spacing-xl);
+    min-width: 280px;
+    max-width: 560px;
+    overflow: hidden;
+}
+
+.md-dialog h2 {
+    font: var(--headline-s);
+    color: var(--on-surface);
+    margin: 0 0 var(--spacing-l);
+}
+
+.md-dialog p {
+    font: var(--body-m);
+    color: var(--on-surface-variant);
+    margin: 0 0 var(--spacing-xl);
+}
+
+/* 对话框按钮容器 */
+.md-dialog .dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-s);
+    margin: var(--spacing-xl) calc(-1 * var(--spacing-xl)) calc(-1 * var(--spacing-xl));
+    padding: var(--spacing-l) var(--spacing-xl);
+    border-top: 1px solid var(--outline-variant);
+    background-color: var(--surface-container-highest);
+}
+
+/* 对话框按钮 */
+.md-dialog .dialog-button {
+    min-width: 72px;
+    height: 40px;
+    padding: 0 var(--spacing-xl);
+    border-radius: 20px;
+    border: none;
+    font: var(--label-l);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--tra);
+}
+
+.md-dialog .dialog-button.filled {
+    background-color: var(--primary);
+    color: var(--on-primary);
+}
+
+.md-dialog .dialog-button.filled:hover {
+    background-color: color-mix(in oklch, var(--primary) 92%, black);
+}
+
+.md-dialog .dialog-button:not(.filled) {
+    background-color: transparent;
+    color: var(--primary);
+}
+
+.md-dialog .dialog-button:not(.filled):hover {
+    background-color: color-mix(in oklch, var(--primary) 8%, transparent);
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
