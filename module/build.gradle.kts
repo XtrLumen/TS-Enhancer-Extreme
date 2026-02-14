@@ -72,12 +72,12 @@ listOf("debug", "release").forEach { variantName ->
             from(rootProject.file("README.md")) {
                 rename(
                     "README.md",
-                    "README4en-US.md"
+                    "README4zh-Hans.md"
                 )
             }
             from(
                 rootProject.files(
-                    "README4zh-Hans.md",
+                    "README4en-US.md",
                     "README4zh-Hant.md"
                 )
             )
@@ -126,7 +126,6 @@ listOf("debug", "release").forEach { variantName ->
                             "bin/cmd",
                             "bin/tseed",
                             "bin/tsees",
-                            "lib/action.sh",
                             "lib/libverify.so",
                             "lib/state.sh",
                             "lib/util_functions.sh",

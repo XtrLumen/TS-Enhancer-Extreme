@@ -45,7 +45,6 @@ fn list(pwd: &Path) -> Option<String> {
         "bin/cmd",
         "bin/tseed",
         "bin/tsees",
-        "lib/action.sh",
         "lib/libverify.so",
         "lib/state.sh",
         "lib/util_functions.sh",

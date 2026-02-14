@@ -338,7 +338,6 @@ conflictappcheck() {
 }
 
 packagelistupdate() {
-  [ "$1" = "-action" ] && PATH="$BACK"
   if [ -f "$TSEECONFIG/blacklist" ]; then
     cat "$TSEECONFIG/sys.txt" > "$TSCONFIG/target.txt"
   else

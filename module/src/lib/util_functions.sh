@@ -85,7 +85,6 @@ check() {
     case "$ORIGIN" in
       *"$P"*)
         logp "E" "环境异常,拦截执行"
-        rm -f "$TSMODDIR/action.sh"
         mv "$TSEEMODDIR/webroot" "$TSEEMODDIR/.webroot"
         mv "$TSEEMODDIR/action.sh" "$TSEEMODDIR/.action.sh"
         ;;
@@ -97,7 +96,6 @@ check() {
     [[ "$ORIGIN" == *"$P"* ]] && {
       logp "I" "环境正常,继续执行"
       mv "$TSEEMODDIR/.webroot" "$TSEEMODDIR/webroot"
-      ln -sf "$TSEEMODDIR/lib/action.sh" "$TSMODDIR/action.sh"
       if [[ ! "$APATCH" && ! "$KSU" ]]; then
         mv "$TSEEMODDIR/.action.sh" "$TSEEMODDIR/action.sh"
       else

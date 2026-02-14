@@ -1,66 +1,64 @@
 # Tricky Store Enhancer Extreme
-Enhances the TrickyStore experience, while providing extreme hiding of detection points introduced by bootloader unlocking.
+提升TrickyStore的使用体验，同时极致隐藏由解锁引导加载程序产生的相关检测点。
 
 > [!TIP]
-> 「[简体中文](README4zh-Hans.md)」「[繁體中文](README4zh-Hant.md)」
+> 「[English](README4en-US.md)」「[繁體中文](README4zh-Hant.md)」
 
-> [!IMPORTANT]
-> This module **specializes** in disguising the bootloader status, **rather than** passed Play Integrity.
+> [!IMPORTANT]  
+> 本模块**专精**伪装引导加载程序状态，**而非**通过PlayIntegrity。
 
-## Requirements
-- [TrickyStore](https://github.com/5ec1cff/TrickyStore) or [TrickyStoreOSS](https://github.com/beakthoven/TrickyStoreOSS) module installed
+## 条件
+- 已安装 [TrickyStore](https://github.com/5ec1cff/TrickyStore) 或 [TrickyStoreOSS](https://github.com/beakthoven/TrickyStoreOSS) 模块
+- 挂载系统不是 OverlayFS
 
-## Install
-1. Flash this module and reboot.
-2. Manual configuration (optional).
-3. Enjoy!
+## 安装
+1. 刷写模块并重新启动设备。
+2. 手动配置(可选)。
+3. 完成！
 
-## Feature
-### Main
-- [x] Automatically tags conflicting modules for removal or deletes them directly; uninstalls conflicting apps in real-time.
-- [x] Takes over TrickyStore module target file management with real-time updates and higher priority than similar modules.
-- [x] Corrects abnormal VerifiedBootHash property automatically
-- [x] Synchronizes the security patch level to the attributes
-- [x] Spoofs bootloader status as locked
-- [x] Provides Google Hardware Attestation Root Certificate signing keybox<sup>Revoked</sup>
-- [x] Adds action button to TrickyStore module card for updating TrickyStore module target files<sup>About to change</sup>.
+## 功能
+### 主要
+- 对冲突模块添加移除标签/强制删除；检测到冲突软件时直接卸载；实时监控
+- 接管TrickyStore模块target.txt，优先级高于任何类似模块；实时监控
+- 启动时全自动修正异常VerifiedBootHash属性
+- 启动时伪装引导加载程序状态为锁定
+- 启动时将安全补丁级别同步到属性
+- 提供谷歌硬件认证根证书签名的keybox<sup>已吊销(即将从安装过程移到WebUI内部)</sup>
 
-### Other
-- [x] Monitors and displays operating status
-- [x] Displays prompts in zh-Hans or en-US based on system language for runtime status and installation processes
-- [x] Backup the Keybox during installation, and restore the backup during uninstallation. Path: `/data/adb/tricky_store/keybox_backup/keybox.xml`
+### 其他
+- 在模块描述显示运行环境和启动结果
+- 根据系统语言分别显示zh-Hans或en-US: 运行状态/安装过程
+- 安装时备份Keybox，于卸载时恢复备份。路径: `/data/adb/tricky_store/keybox_backup/keybox.xml`
 
 ### TSEE-CLI
-**With the WebUI still under development, it can only be configured manually for now**
-- Invoke function
-  - Execute in the terminal as root: `PATH="/data/adb/modules/ts_enhancer_extreme/bin:$PATH"`
-    - Steal Google Hardware Attestation Root Certificate signing keybox: `tseed --stealkeybox` `[Basic |-a|-b|-c| ]`<sup>「[Tricky-Addon](https://github.com/KOWX712/Tricky-Addon-Update-Target-List)」「[Integrity-Box](https://github.com/MeowDump/Integrity-Box)」「[YuriKey-Manager](https://github.com/YurikeyDev/yurikey)」</sup>
-    - Fetch the latest security patch level for Pixel update announcements online: `tseed --securitypatchdatefetch`
-    - TrickyStore service status reading/control: `tseed --tsctl` `[Basic |-stop|-start|-state| ]`
-    - TSEnhancerExtreme service status reading/control: `tseed --tseectl` `[Basic |-stop|-start|-state| ]`
-- Configuration Module
-  - Configuration directory path: `/data/adb/ts_enhancer_extreme`
-    - Add system app package names to sys.txt for inclusion in TrickyStore module target file.
-    - Add user app package names to usr.txt for exclusion from TrickyStore module target file.
-    - Logs are located at `/data/adb/ts_enhancer_extreme/log`. If you encounter any issues, please create an issue and include the logs.
+- 调用
+  - 于终端以Root身份执行`PATH="/data/adb/modules/ts_enhancer_extreme/bin:$PATH"`
+    - 窃取谷歌硬件认证根证书签名的keybox: `tseed --stealkeybox` `[Basic |-a|-b|-c| ]`<sup>「[Tricky-Addon](https://github.com/KOWX712/Tricky-Addon-Update-Target-List)」「[Integrity-Box](https://github.com/MeowDump/Integrity-Box)」「[YuriKey-Manager](https://github.com/YurikeyDev/yurikey)」</sup>
+    - 联网拉取Pixel更新公告的最新安全补丁级别: `tseed --securitypatchdatefetch`
+    - TrickyStore后台服务停止进程/启动服务/状态检测: `tseed --tsctl` `[Basic |-stop|-start|-state| ]`
+    - TSEnhancerExtreme后台服务停止进程/启动服务/状态检测: `tseed --tseectl` `[Basic |-stop|-start|-state| ]`
+- 配置
+  - 配置目录路径: `/data/adb/ts_enhancer_extreme`
+  - 日志文件路径: `/data/adb/ts_enhancer_extreme/log/log.log`，若遇到问题，请创建 issue 并附上日志。
+
 ### WebUI
-- [ ] Log Monitoring Window
-- [ ] Quickly select user apps
-- [ ] Quickly select system apps
-- [ ] Import keybox from internal storage
-- [ ] Invoke TrickyStore service status reading/control
-- [ ] Invoke TSEnhancerExtreme service status reading/control
-- [ ] Invoke steal Google Hardware Attestation Root Certificate signing keybox
-- [ ] Quickly customize security patch levels / Invoke fetch the latest security patch level for Pixel update announcements online
+- 导出日志
+- 目标列表管理
+- 自定义安全补丁级别
+- 从内部存储导入keybox
+- 调用tseed-窃取谷歌硬件认证根证书签名的keybox
+- 调用tseed-联网拉取Pixel更新公告的最新安全补丁级别
+- 调用tseed-TrickyStore后台服务停止进程/启动服务/状态检测
+- 调用tseed-TSEnhancerExtreme后台服务停止进程/启动服务/状态检测
 
 > [!NOTE]
-> ### WebUI supports
->   - **KernelSU or APatch**
->     - Native support
->   - **Magisk** 
->     - Provide action button to navigate to [WebUI X Portable](https://github.com/MMRLApp/WebUI-X-Portable) or [KSUWebUIStandalone](https://github.com/5ec1cff/KsuWebUIStandalone)
->       - Automatically install [KSUWebUIStandalone](https://github.com/5ec1cff/KsuWebUIStandalone) when no WebUI standalone software is installed
+> ### WebUI支持
+>   - **KernelSU 或 APatch**
+>     - 原生支持
+>   - **Magisk**
+>     - 提供跳转到 [WebUI X Portable](https://github.com/MMRLApp/WebUI-X-Portable) 或 [KSUWebUIStandalone](https://github.com/5ec1cff/KsuWebUIStandalone) 的操作按钮
+>       - 在未安装任何 WebUI 独立软件时自动安装 [KSUWebUIStandalone](https://github.com/5ec1cff/KsuWebUIStandalone)
 
-## Acknowledgement
+## 致谢
 - [5ec1cff/cmd-wrapper](https://gist.github.com/5ec1cff/4b3a3ef329094e1427e2397cfa2435ff)
 - [vvb2060/KeyAttestation](https://github.com/vvb2060/KeyAttestation)

@@ -52,6 +52,7 @@ conflictdes_all() { sed -i "s|^description=.*|description=$DES$WAY|" "/data/adb/
 #PUBLIC#
 ADB="/data/adb"
 SD="$ADB/service.d"
+MODULESDIR="$ADB/modules"
 TSCONFIG="$ADB/tricky_store"
 TSEECONFIG="$ADB/ts_enhancer_extreme"
 if [ "$KSU" ]; then
@@ -97,7 +98,6 @@ com.android.patch
 me.garfieldhan.apatch.next
 "
 #CONFLICT CHECK#
-MODULESDIR="$ADB/modules"
 DETECTED=0
 CONFLICT="
 Yurikey
@@ -194,15 +194,16 @@ sleep 1s
 #DELETE OLD FILES#
 print_cn "- 删除旧版文件"
 print_en "- Delete older version files"
-rm -f "$SD/.tsee_state.sh"
 rm -rf "$ADB/tricky_store_old"
 rm -rf "$TSCONFIG/config_backup"
+rm -f "$SD/.tsee_state.sh"
 rm -f "$TSEECONFIG/hash.txt"
 rm -f "$TSEECONFIG/boothash.txt"
 rm -f "$TSEECONFIG/log/service.log"
 rm -f "$TSEECONFIG/log/inotifyd.log"
 rm -f "$TSEECONFIG/log/dex-service.log"
 rm -f "$TSEECONFIG/log/post-fs-data.log"
+rm -f "$MODULESDIR/tricky_store/action.sh"
 ##END##
 
 ##EXTRACT MODULE FILES##
