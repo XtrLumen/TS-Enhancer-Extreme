@@ -15,7 +15,7 @@
 #
 
 cd ${0%/*}
-source "./lib/util_functions.sh"
+source "./script/util_functions.sh"
 check
 
 logs "I" "启动后台服务"

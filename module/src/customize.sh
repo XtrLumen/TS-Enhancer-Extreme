@@ -66,6 +66,7 @@ fi
 FILES="
 bin/*
 lib/*
+script/*
 webroot/*
 post-fs-data.sh
 uninstall.sh
@@ -213,7 +214,7 @@ for FILE in $FILES; do
   extract "$ZIPFILE" "$FILE" "$MODPATH"
 done
 mkdir -p "$SD"
-cp -f "$MODPATH/lib/state.sh" "$SD/.tsee_state.sh"
+cp -f "$MODPATH/script/state.sh" "$SD/.tsee_state.sh"
 [ "$Magisk" ] && {
   pm path com.dergoogler.mmrl.wx > /dev/null 2>&1 || pm path io.github.a13e300.ksuwebui > /dev/null 2>&1 || {
     print_cn "- 安装 WebUI 软件"

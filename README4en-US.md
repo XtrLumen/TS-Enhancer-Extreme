@@ -33,10 +33,10 @@ Enhances the TrickyStore experience, while providing extreme hiding of detection
 ### TSEE-CLI
 - Invoke
   - Execute in the terminal as root: `PATH="/data/adb/modules/ts_enhancer_extreme/bin:$PATH"`
-    - Steal Google Hardware Attestation Root Certificate signing keybox: `tseed --stealkeybox` `[Basic |-a|-b|-c| ]`<sup>「[Tricky-Addon](https://github.com/KOWX712/Tricky-Addon-Update-Target-List)」「[Integrity-Box](https://github.com/MeowDump/Integrity-Box)」「[YuriKey-Manager](https://github.com/YurikeyDev/yurikey)」</sup>
+    - Steal Google Hardware Attestation Root Certificate signing keybox: `tseed --stealkeybox` `[-a|-b|-c]`<sup>「[Tricky-Addon](https://github.com/KOWX712/Tricky-Addon-Update-Target-List)」「[Integrity-Box](https://github.com/MeowDump/Integrity-Box)」「[YuriKey-Manager](https://github.com/YurikeyDev/yurikey)」</sup>
     - Fetch the latest Security Patch Level for Pixel Update Announcements online: `tseed --securitypatchdatefetch`
-    - TrickyStore Background Service Stop Process / Start Service / Status Check: `tseed --tsctl` `[Basic |-stop|-start|-state| ]`
-    - TSEnhancerExtreme Background Service Stop Process / Start Service / Status Check: `tseed --tseectl` `[Basic |-stop|-start|-state| ]`
+    - TrickyStore Background Service Stop Process / Start Service / Status Check: `tseed --tsctl` `[-stop|-start|-state]`
+    - TSEnhancerExtreme Background Service Stop Process / Start Service / Status Check: `tseed --tseectl` `[-stop|-start|-state]`
 - Configuration
   - Config directory path: `/data/adb/ts_enhancer_extreme`
   - Log file path: `/data/adb/ts_enhancer_extreme/log`. If you encounter problems, please create an issue and attach the logs.

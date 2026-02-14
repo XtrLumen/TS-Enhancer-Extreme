@@ -33,10 +33,10 @@
 ### TSEE-CLI
 - 调用
   - 于终端以Root身份执行`PATH="/data/adb/modules/ts_enhancer_extreme/bin:$PATH"`
-    - 窃取谷歌硬件认证根证书签名的keybox: `tseed --stealkeybox` `[Basic |-a|-b|-c| ]`<sup>「[Tricky-Addon](https://github.com/KOWX712/Tricky-Addon-Update-Target-List)」「[Integrity-Box](https://github.com/MeowDump/Integrity-Box)」「[YuriKey-Manager](https://github.com/YurikeyDev/yurikey)」</sup>
+    - 窃取谷歌硬件认证根证书签名的keybox: `tseed --stealkeybox` `[-a|-b|-c]`<sup>「[Tricky-Addon](https://github.com/KOWX712/Tricky-Addon-Update-Target-List)」「[Integrity-Box](https://github.com/MeowDump/Integrity-Box)」「[YuriKey-Manager](https://github.com/YurikeyDev/yurikey)」</sup>
     - 联网拉取Pixel更新公告的最新安全补丁级别: `tseed --securitypatchdatefetch`
-    - TrickyStore后台服务停止进程/启动服务/状态检测: `tseed --tsctl` `[Basic |-stop|-start|-state| ]`
-    - TSEnhancerExtreme后台服务停止进程/启动服务/状态检测: `tseed --tseectl` `[Basic |-stop|-start|-state| ]`
+    - TrickyStore后台服务停止进程/启动服务/状态检测: `tseed --tsctl` `[-stop|-start|-state]`
+    - TSEnhancerExtreme后台服务停止进程/启动服务/状态检测: `tseed --tseectl` `[-stop|-start|-state]`
 - 配置
   - 配置目录路径: `/data/adb/ts_enhancer_extreme`
   - 日志文件路径: `/data/adb/ts_enhancer_extreme/log/log.log`，若遇到问题，请创建 issue 并附上日志。

@@ -16,7 +16,7 @@
 
 cd ${0%/*}
 [ -d "../modules/ts_enhancer_extreme" ] || rm -f "$0"
-source "../modules/ts_enhancer_extreme/lib/util_functions.sh"
+source "../modules/ts_enhancer_extreme/script/util_functions.sh"
 
 initwait
 invoke "刷新运行状态" "--staterefresh"
