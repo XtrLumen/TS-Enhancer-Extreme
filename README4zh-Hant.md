@@ -8,7 +8,7 @@
 > 本模組**專精**偽裝引導載入程式狀態，**而非**通過PlayIntegrity。
 
 ## 條件
-- 已安裝 [TrickyStore](https://github.com/5ec1cff/TrickyStore) 或 [TrickyStoreOSS](https://github.com/beakthoven/TrickyStoreOSS) 模組
+- 已安裝 [TrickyStore](https://github.com/5ec1cff/TrickyStore)，或 [TrickyStoreOSS](https://github.com/beakthoven/TrickyStoreOSS) 或它的分支 [TEESimulator](https://github.com/JingMatrix/TEESimulator) 模組
 - 掛載系統不是 OverlayFS
 
 ## 安裝

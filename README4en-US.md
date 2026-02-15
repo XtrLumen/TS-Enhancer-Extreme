@@ -8,7 +8,7 @@ Enhances the TrickyStore experience, while providing extreme hiding of detection
 > This module **specializes** in disguising the bootloader status, **rather than** passed Play Integrity.
 
 ## Requirements
-- [TrickyStore](https://github.com/5ec1cff/TrickyStore) or [TrickyStoreOSS](https://github.com/beakthoven/TrickyStoreOSS) module installed
+- Installed the [TrickyStore](https://github.com/5ec1cff/TrickyStore), or [TrickyStoreOSS](https://github.com/beakthoven/TrickyStoreOSS) or its branch [TEESimulator](https://github.com/JingMatrix/TEESimulator) module
 - The mounted system is not OverlayFS
 
 ## Install

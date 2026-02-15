@@ -2,3 +2,7 @@
 
 *.bat text eol=crlf
 *.jar binary
+
+*.html linguist-vendored
+*.css linguist-vendored
+*.js linguist-vendored

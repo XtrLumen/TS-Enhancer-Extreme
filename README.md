@@ -8,7 +8,7 @@
 > 本模块**专精**伪装引导加载程序状态，**而非**通过PlayIntegrity。
 
 ## 条件
-- 已安装 [TrickyStore](https://github.com/5ec1cff/TrickyStore) 或 [TrickyStoreOSS](https://github.com/beakthoven/TrickyStoreOSS) 模块
+- 已安装 [TrickyStore](https://github.com/5ec1cff/TrickyStore)，或 [TrickyStoreOSS](https://github.com/beakthoven/TrickyStoreOSS) 或它的分支 [TEESimulator](https://github.com/JingMatrix/TEESimulator) 模块
 - 挂载系统不是 OverlayFS
 
 ## 安装
